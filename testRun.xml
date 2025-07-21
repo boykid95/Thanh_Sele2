@@ -2,7 +2,7 @@
 <suite name="Demo TA Suite">
     <test name="Shop Tab Test">
         <classes>
-            <class name="testcase.TC_01_VerifyShopPage"/>
+            <class name="testcase.TC_00_VerifyPurchaseTestDemo"/>
         </classes>
     </test>
 </suite>
