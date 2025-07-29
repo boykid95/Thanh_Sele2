@@ -129,7 +129,6 @@ public class CheckoutPage extends BasePage {
 
     @Step("Click on 'Place Order' button")
     public OrderStatusPage placeOrder() {
-        elementHelper.waitForElementClickable(placeOrderButton, "Place Order Button");
         elementHelper.clickToElement(placeOrderButton, "Place Order Button");
 
         waitForLoadingOverlay();

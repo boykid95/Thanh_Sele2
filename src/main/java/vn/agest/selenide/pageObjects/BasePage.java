@@ -25,7 +25,7 @@ public abstract class BasePage {
     private final SelenideElement loginButton = $x("//span[contains(@class, 'flex-inline')]//span[contains(text(), 'Log in / Sign u')]");
     private final SelenideElement allDepartmentsMenu = $x("//div[@class='secondary-menu-wrapper']//span[text()='All departments']");
     private final SelenideElement productMenu = $x("//ul[@id='menu-all-departments-1']");
-    private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'et_b_header-cart')]");
+    private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
     private final SelenideElement backToTopButton = $x("//div[contains(@class, 'back-top')]");
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
 
@@ -108,5 +108,14 @@ public abstract class BasePage {
             Selenide.executeJavaScript("arguments[0].style.display='none';", cookieNoticeDialog);
             cookieNoticeDialog.shouldNotBe(Condition.visible);
         }
+    }
+
+    @Step("Navigate to Shop page")
+    public ShopPage navigateToShopPage() {
+        SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
+
+        elementHelper.waitForElementClickable(shopLink, "Shop Link");
+        elementHelper.clickToElement(shopLink, "Shop Link");
+        return new ShopPage();
     }
 }

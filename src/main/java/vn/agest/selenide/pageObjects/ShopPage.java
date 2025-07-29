@@ -1,0 +1,89 @@
+package vn.agest.selenide.pageObjects;
+
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
+import vn.agest.selenide.common.utilities.helpers.ElementHelper;
+import vn.agest.selenide.common.utilities.other.Log;
+import vn.agest.selenide.enums.PageType;
+import vn.agest.selenide.model.Product;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.codeborne.selenide.Selenide.$$x;
+import static com.codeborne.selenide.Selenide.$x;
+
+public class ShopPage extends BasePage {
+
+    private final ElementHelper elementHelper = new ElementHelper();
+
+    private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
+    private final SelenideElement adCloseButton = $x("//div[@class='pum-close']");
+
+    private final ElementsCollection productItems = $$x("//div[contains(@class,'content-product')]");
+    private static final String TITLE_SELECTOR = ".product-details .product-title";
+    private static final String ADD_TO_CART_SELECTOR = ".product-details .add_to_cart_button";
+    private static final String DISCOUNTED_PRICE_SELECTOR = ".products .price ins .amount";
+    private static final String NORMAL_PRICE_SELECTOR = ".products .price .amount";
+
+    public ShopPage() {
+        super(PageType.SHOP_PAGE);
+        closeAdIfPresent();
+    }
+
+    @Step("Close any displayed advertisement in Shop page")
+    private void closeAdIfPresent() {
+        if (adCloseButton.exists()) {
+            elementHelper.clickToElement(adCloseButton, "Click Close Advertisement");
+            Log.info("Advertisement closed successfully.");
+        }
+    }
+
+    @Step("Extracting price from product: {product}")
+    private String extractPrice(SelenideElement product) {
+        SelenideElement discounted = product.$(DISCOUNTED_PRICE_SELECTOR);
+        if (discounted.exists()) {
+            return discounted.getText().trim();
+        }
+        return product.$(NORMAL_PRICE_SELECTOR).getText().trim();
+    }
+
+    @Step("Get {count} products to list")
+    public List<Product> getRandomProducts(int count) {
+        List<SelenideElement> shuffledProducts = productItems.stream().collect(Collectors.toList());
+        Collections.shuffle(shuffledProducts);
+
+        return shuffledProducts.stream()
+                .limit(count)
+                .map(productElement -> {
+                    String name = productElement.find(TITLE_SELECTOR).getText();
+                    String priceText = extractPrice(productElement);
+                    double price = Double.parseDouble(priceText.replace("$", "").replace(",", "").trim());
+                    Product product = new Product(name, price, 1);
+                    product.logInfo("Selected random product");
+                    return product;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Step("Add {products} to cart")
+    public void addProductsToCart(List<Product> products) {
+        for (Product product : products) {
+            for (SelenideElement item : productItems) {
+                String itemName = item.find(TITLE_SELECTOR).getText().trim();
+                if (itemName.equals(product.getName())) {
+                    elementHelper.clickToElement(item.find(ADD_TO_CART_SELECTOR), "Click Add To Cart button");
+                    break;
+                }
+            }
+        }
+    }
+
+    @Step("Go to Cart Page")
+    public CartPage goToCart() {
+        elementHelper.clickToElement(viewCartButton, "Click View Cart button");
+        return new CartPage();
+    }
+}

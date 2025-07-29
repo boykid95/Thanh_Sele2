@@ -41,8 +41,9 @@ public class ElementHelper {
     public void clickToElement(SelenideElement element, String elementName) {
         try {
             waitForElementClickable(element, elementName);
-            highlightElement(element);
             Log.info(String.format("Clicking element '%s'...", elementName));
+            element.scrollIntoCenter();
+            highlightElement(element);
             element.click();
         } catch (Exception e) {
             Log.error("Failed to click element '" + elementName + "'. " + e.getMessage());
