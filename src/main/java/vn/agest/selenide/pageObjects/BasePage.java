@@ -74,8 +74,6 @@ public abstract class BasePage {
         elementHelper.waitForElementVisible(productMenu, "Product Menu");
     }
 
-
-
     @Step("Navigate to product category: {productCategory}")
     public ProductCategoryPage navigateToProductCategory(ProductCategory productCategory) {
         navigateToAllDepartments();

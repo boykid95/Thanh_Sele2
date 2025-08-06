@@ -13,13 +13,10 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
     @Test(description = "Verify users can buy an item successfully")
     @Description("Full E2E flow: open homepage, login, navigate to All Departments, select category, add to cart, checkout, and verify order")
     public void verifyUserCanBuyItemSuccessfully() {
-        SoftAssert softAssert = new SoftAssert();
 
         homePage.open();
-
         loginPage.navigateToLoginPage();
         loginPage.loginWithValidCredentials();
-
         homePage.navigateToAllDepartments();
         homePage.navigateToProductCategory(ProductCategory.ELECTRONIC_COMPONENTS_SUPPLIES);
 

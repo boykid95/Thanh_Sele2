@@ -11,6 +11,6 @@ public class Product {
     private int quantity;
 
     public void logInfo(String prefix) {
-        System.out.println(prefix + ": " + name + ", Price: " + price + ", Quantity: " + quantity);
+        logInfo(String.format(prefix + ": %s, Price: %s, Quantity: %s", name, price, quantity));
     }
 }

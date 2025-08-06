@@ -39,11 +39,17 @@ public class CheckoutPage extends BasePage {
     private String billingLastName;
     @Getter
     private String billingCompany;
+    @Getter
     private String billingStreet;
+    @Getter
     private String billingCity;
+    @Getter
     private String billingPostcode;
+    @Getter
     private String billingCountry;
+    @Getter
     private String billingPhone;
+    @Getter
     private String billingEmail;
 
     public CheckoutPage() {
@@ -73,30 +79,6 @@ public class CheckoutPage extends BasePage {
     @Step("Get Billing Full Name")
     public String getBillingFullName() {
         return billingFirstName + " " + billingLastName;
-    }
-
-    public String getBillingStreet() {
-        return billingStreet;
-    }
-
-    public String getBillingCity() {
-        return billingCity;
-    }
-
-    public String getBillingPostcode() {
-        return billingPostcode;
-    }
-
-    public String getBillingCountry() {
-        return billingCountry;
-    }
-
-    public String getBillingPhone() {
-        return billingPhone;
-    }
-
-    public String getBillingEmail() {
-        return billingEmail;
     }
 
     @Step("Verify item details on Checkout page match selected product")

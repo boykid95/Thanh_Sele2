@@ -5,6 +5,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import lombok.Getter;
 import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
 import vn.agest.selenide.enums.ProductCategory;
 
@@ -22,7 +23,9 @@ public class ProductCategoryPage extends BasePage {
     private final SelenideElement addToCartButton = selectedProductElement
             .$x(".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]");
 
+    @Getter
     private String selectedProductName;
+    @Getter
     private String selectedProductPrice;
 
     private final String PRODUCT_ITEMS_XPATH = "//div[contains(@class,'ajax-content clearfix')]/div";
@@ -115,15 +118,6 @@ public class ProductCategoryPage extends BasePage {
         elementHelper.clickToElement(addToCartButton, "Add to Cart Button");
 
         System.out.println("[INFO] Clicked 'Add to Cart' for selected product: " + selectedProductName);
-    }
-
-    // Getter to verify
-    public String getSelectedProductName() {
-        return selectedProductName;
-    }
-
-    public String getSelectedProductPrice() {
-        return selectedProductPrice;
     }
 
 }

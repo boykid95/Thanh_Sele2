@@ -5,6 +5,7 @@ import com.codeborne.selenide.Selenide;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
+import org.testng.asserts.SoftAssert;
 import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
 import vn.agest.selenide.common.utilities.other.Log;
 import vn.agest.selenide.enums.PageType;
@@ -20,6 +21,7 @@ public class BaseTest {
     public String testCaseName;
     public HomePage homePage = new HomePage();
     public LoginPage loginPage = new LoginPage();
+    public SoftAssert softAssert = new SoftAssert();
 
     @Parameters("browser")
     @BeforeClass
