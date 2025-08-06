@@ -2,8 +2,7 @@ package vn.agest.selenide.enums;
 
 public enum ProductCategory {
 
-    ELECTRONIC_COMPONENTS_SUPPLIES("Electronic Components & Supplies", "product-category/electronic-components-supplies", "Electronic Components & Supplies – TestArchitect Sample Website"),
-    AUTOMOBILES_MOTORCYCLES("Automobiles & Motorcycles", "product-category/automobiles-motorcycles", "Automobiles & Motorcycles – TestArchitect Sample Website");
+    ELECTRONIC_COMPONENTS_SUPPLIES("Electronic Components & Supplies", "product-category/electronic-components-supplies", "Electronic Components & Supplies – TestArchitect Sample Website");
 
     private final String displayName;
     private final String urlPath;

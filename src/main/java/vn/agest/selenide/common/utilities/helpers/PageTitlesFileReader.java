@@ -46,5 +46,4 @@ public class PageTitlesFileReader {
         }
         return title.trim();
     }
-
 }

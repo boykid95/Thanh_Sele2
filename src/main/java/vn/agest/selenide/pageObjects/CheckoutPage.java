@@ -5,6 +5,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Step;
+import lombok.Getter;
 import vn.agest.selenide.common.utilities.other.Log;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.common.utilities.helpers.ElementHelper;
@@ -32,8 +33,11 @@ public class CheckoutPage extends BasePage {
     private final SelenideElement phoneInput = $x("//input[@id='billing_phone']");
     private final SelenideElement emailInput = $x("//input[@id='billing_email']");
 
+    private final SelenideElement loadingOverlay = $x("//div[@class='blockUI blockOverlay']");
+
     private String billingFirstName;
     private String billingLastName;
+    @Getter
     private String billingCompany;
     private String billingStreet;
     private String billingCity;
@@ -63,25 +67,12 @@ public class CheckoutPage extends BasePage {
         billingPhone = phoneInput.getValue().trim();
         billingEmail = emailInput.getValue().trim();
 
-        Log.info("Captured Billing Info: "
-                + "FirstName=" + billingFirstName
-                + ", LastName=" + billingLastName
-                + ", Company=" + billingCompany
-                + ", Street=" + billingStreet
-                + ", City=" + billingCity
-                + ", Postcode=" + billingPostcode
-                + ", Country=" + billingCountry
-                + ", Phone=" + billingPhone
-                + ", Email=" + billingEmail);
+        Log.info("Captured Billing Info: " + "FirstName=" + billingFirstName + ", LastName=" + billingLastName + ", Company=" + billingCompany + ", Street=" + billingStreet + ", City=" + billingCity + ", Postcode=" + billingPostcode + ", Country=" + billingCountry + ", Phone=" + billingPhone + ", Email=" + billingEmail);
     }
 
     @Step("Get Billing Full Name")
     public String getBillingFullName() {
         return billingFirstName + " " + billingLastName;
-    }
-
-    public String getBillingCompany() {
-        return billingCompany;
     }
 
     public String getBillingStreet() {
@@ -130,7 +121,6 @@ public class CheckoutPage extends BasePage {
     @Step("Click on 'Place Order' button")
     public OrderStatusPage placeOrder() {
         elementHelper.clickToElement(placeOrderButton, "Place Order Button");
-
         waitForLoadingOverlay();
         Selenide.Wait().until(webDriver -> WebDriverRunner.url().contains("/checkout/order-received/"));
         elementHelper.waitToLoadPage();
@@ -139,8 +129,6 @@ public class CheckoutPage extends BasePage {
 
     @Step("Wait for loading overlay to appear and disappear")
     public void waitForLoadingOverlay() {
-        SelenideElement loadingOverlay = $x("//div[@class='blockUI blockOverlay']");
-
         try {
             loadingOverlay.shouldBe(Condition.visible, Duration.ofSeconds(5));
         } catch (Exception e) {

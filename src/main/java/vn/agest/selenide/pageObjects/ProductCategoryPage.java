@@ -13,19 +13,22 @@ import java.util.Random;
 import static com.codeborne.selenide.Selenide.*;
 
 public class ProductCategoryPage extends BasePage {
-
     private final ProductCategory category;
 
     private final SelenideElement gridViewButton = $x("//div[contains(@class,'switch-grid')]");
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
     private SelenideElement selectedProductElement;
+    private final SelenideElement addToCartButton = selectedProductElement
+            .$x(".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]");
 
     private String selectedProductName;
     private String selectedProductPrice;
-    private String selectedProductImageUrl;
-    private String selectedProductQuantity = "1"; // Default quantity = 1
 
+    private final String PRODUCT_ITEMS_XPATH = "//div[contains(@class,'ajax-content clearfix')]/div";
+    private final String PRODUCT_DETAILS_REL_XPATH = ".//div[contains(@class,'product-details')]";
+    private final String PRODUCT_TITLE_REL_XPATH = ".//h2[contains(@class,'product-title')]";
+    private final String PRODUCT_PRICE_REL_XPATH = ".//span[contains(@class,'price')]";
     public ProductCategoryPage(ProductCategory category) {
         super(null);
         this.category = category;
@@ -45,7 +48,6 @@ public class ProductCategoryPage extends BasePage {
             throw new AssertionError("Product Category Page title mismatch! Expected: " + expectedTitle + ", Actual: " + actualTitle);
         }
     }
-
 
     private String getContainerXPathByLayout(String layout) {
         if (layout.equalsIgnoreCase("grid")) {
@@ -87,16 +89,15 @@ public class ProductCategoryPage extends BasePage {
 
     @Step("Select a random product")
     public void selectRandomProduct() {
-        ElementsCollection visibleItems = $$x("//div[contains(@class,'ajax-content clearfix')]/div");
+        ElementsCollection visibleItems = $$x(PRODUCT_ITEMS_XPATH);
         if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
 
         selectedProductElement = visibleItems.get(new Random().nextInt(visibleItems.size()));
         selectedProductElement.scrollIntoView(true);
 
-        SelenideElement productDetails = selectedProductElement.$x(".//div[contains(@class,'product-details')]");
-        selectedProductName = productDetails.$x(".//h2[contains(@class,'product-title')]").getText().trim();
-        selectedProductPrice = productDetails.$x(".//span[contains(@class,'price')]").getText().trim();
-        selectedProductImageUrl = selectedProductElement.$x(".//img").getAttribute("src").trim();
+        SelenideElement productDetails = selectedProductElement.$x(PRODUCT_DETAILS_REL_XPATH);
+        selectedProductName = productDetails.$x(PRODUCT_TITLE_REL_XPATH).getText().trim();
+        selectedProductPrice = productDetails.$x(PRODUCT_PRICE_REL_XPATH).getText().trim();
 
         System.out.println("[INFO] Selected Product - Name: " + selectedProductName + ", Price: " + selectedProductPrice);
     }
@@ -109,12 +110,8 @@ public class ProductCategoryPage extends BasePage {
 
         selectedProductElement.scrollIntoView(true);
 
-        SelenideElement addToCartButton = selectedProductElement
-                .$x(".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]");
-
         elementHelper.moveToElement(addToCartButton, "Add to Cart Button");
         elementHelper.waitForElementVisible(addToCartButton, "Add to Cart Button");
-        elementHelper.waitForElementClickable(addToCartButton, "Add to Cart Button");
         elementHelper.clickToElement(addToCartButton, "Add to Cart Button");
 
         System.out.println("[INFO] Clicked 'Add to Cart' for selected product: " + selectedProductName);

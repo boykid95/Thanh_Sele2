@@ -12,7 +12,6 @@ import vn.agest.selenide.common.utilities.other.Log;
 
 public class ElementHelper {
 
-    // Wait for page to load completely
     public void waitToLoadPage() {
         try {
             Selenide.Wait().until(driver ->
@@ -24,20 +23,17 @@ public class ElementHelper {
         }
     }
 
-    // Wait for element to be visible
     public void waitForElementVisible(SelenideElement element, String elementName) {
         Log.info(String.format("Waiting for element '%s' to be visible...", elementName));
         element.shouldBe(Condition.visible);
     }
 
-    // Wait for element to be clickable
     public void waitForElementClickable(SelenideElement element, String elementName) {
         Log.info(String.format("Waiting for element '%s' to be clickable...", elementName));
         element.shouldBe(Condition.visible);
         element.shouldBe(Condition.enabled);
     }
 
-    // Click to element
     public void clickToElement(SelenideElement element, String elementName) {
         try {
             waitForElementClickable(element, elementName);

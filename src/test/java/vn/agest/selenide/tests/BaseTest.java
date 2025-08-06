@@ -8,6 +8,8 @@ import org.testng.annotations.Parameters;
 import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
 import vn.agest.selenide.common.utilities.other.Log;
 import vn.agest.selenide.enums.PageType;
+import vn.agest.selenide.pageObjects.HomePage;
+import vn.agest.selenide.pageObjects.LoginPage;
 
 import java.util.Arrays;
 
@@ -16,6 +18,8 @@ import static com.codeborne.selenide.Selenide.closeWebDriver;
 
 public class BaseTest {
     public String testCaseName;
+    public HomePage homePage = new HomePage();
+    public LoginPage loginPage = new LoginPage();
 
     @Parameters("browser")
     @BeforeClass

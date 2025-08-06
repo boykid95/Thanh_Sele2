@@ -28,6 +28,10 @@ public abstract class BasePage {
     private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
     private final SelenideElement backToTopButton = $x("//div[contains(@class, 'back-top')]");
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
+    private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
+
+    private static final String CATEGORY_LINK_XPATH_TEMPLATE =
+            "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
     public BasePage(PageType pageType) {
         this.pageType = pageType;
@@ -35,8 +39,7 @@ public abstract class BasePage {
 
     @Step("Open page with defined URL and verify title")
     public void open() {
-        String url = ConfigFileReader.getUrlFromPageType(pageType);
-        Selenide.open(url);
+        Selenide.open(ConfigFileReader.getUrlFromPageType(pageType));
         elementHelper.waitToLoadPage();
         closePopupIfPresent();
 
@@ -49,20 +52,18 @@ public abstract class BasePage {
     }
 
     @Step("Close popup")
-    public static void closePopupIfPresent() {
+    public void closePopupIfPresent() {
         try {
-            SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
             if (popupCloseButton.isDisplayed() || popupCloseButton.shouldBe(visible, Duration.ofSeconds(5)).isDisplayed()) {
-                popupCloseButton.click();
+                elementHelper.clickToElement(popupCloseButton, "Close Popup");
             }
         } catch (Exception ignored) {
         }
     }
 
     @Step("Navigate to Login Page")
-    public LoginPage navigateToLoginPage() {
+    public void navigateToLoginPage() {
         elementHelper.clickToElement(loginButton, "Login Button");
-        return new LoginPage();
     }
 
     @Step("Navigate to All Departments menu")
@@ -73,13 +74,14 @@ public abstract class BasePage {
         elementHelper.waitForElementVisible(productMenu, "Product Menu");
     }
 
+
+
     @Step("Navigate to product category: {productCategory}")
     public ProductCategoryPage navigateToProductCategory(ProductCategory productCategory) {
         navigateToAllDepartments();
 
-        SelenideElement categoryLink = $x("//div[@class='secondary-menu-wrapper']//a[text()='" + productCategory.getDisplayName() + "']");
+        SelenideElement categoryLink = $x(String.format(CATEGORY_LINK_XPATH_TEMPLATE, productCategory.getDisplayName()));
         elementHelper.waitForElementVisible(categoryLink, productCategory.getDisplayName() + " Link");
-        elementHelper.highlightElement(categoryLink);
         elementHelper.clickToElement(categoryLink, productCategory.getDisplayName() + " Link");
         elementHelper.waitToLoadPage();
 
@@ -98,7 +100,6 @@ public abstract class BasePage {
         dismissCookieNoticeIfPresent();
         elementHelper.waitForElementVisible(backToTopButton, "Back to Top Button");
         elementHelper.clickToElement(backToTopButton, "Back to Top Button");
-        elementHelper.waitForElementVisible(viewCartButton, "View Cart Button");
     }
 
     @Step("Dismiss Cookie Notice if present")
