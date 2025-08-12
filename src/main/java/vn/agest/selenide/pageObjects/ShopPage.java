@@ -23,10 +23,10 @@ public class ShopPage extends BasePage {
     private final SelenideElement adCloseButton = $x("//div[@class='pum-close']");
 
     private final ElementsCollection productItems = $$x("//div[contains(@class,'content-product')]");
-    private static final String TITLE_SELECTOR = ".product-details .product-title";
-    private static final String ADD_TO_CART_SELECTOR = ".product-details .add_to_cart_button";
-    private static final String DISCOUNTED_PRICE_SELECTOR = ".products .price ins .amount";
-    private static final String NORMAL_PRICE_SELECTOR = ".products .price .amount";
+    private static final String titleSelector = ".product-details .product-title";
+    private static final String addToCartSelector = ".product-details .add_to_cart_button";
+    private static final String discountedPriceSelector = ".products .price ins .amount";
+    private static final String normalPriceSelector = ".products .price .amount";
 
     public ShopPage() {
         super(PageType.SHOP_PAGE);
@@ -43,11 +43,11 @@ public class ShopPage extends BasePage {
 
     @Step("Extracting price from product: {product}")
     private String extractPrice(SelenideElement product) {
-        SelenideElement discounted = product.$(DISCOUNTED_PRICE_SELECTOR);
+        SelenideElement discounted = product.$(discountedPriceSelector);
         if (discounted.exists()) {
             return discounted.getText().trim();
         }
-        return product.$(NORMAL_PRICE_SELECTOR).getText().trim();
+        return product.$(normalPriceSelector).getText().trim();
     }
 
     @Step("Get {count} products to list")
@@ -58,7 +58,7 @@ public class ShopPage extends BasePage {
         return shuffledProducts.stream()
                 .limit(count)
                 .map(productElement -> {
-                    String name = productElement.find(TITLE_SELECTOR).getText();
+                    String name = productElement.find(titleSelector).getText();
                     String priceText = extractPrice(productElement);
                     double price = Double.parseDouble(priceText.replace("$", "").replace(",", "").trim());
                     Product product = new Product(name, price, 1);
@@ -72,9 +72,9 @@ public class ShopPage extends BasePage {
     public void addProductsToCart(List<Product> products) {
         for (Product product : products) {
             for (SelenideElement item : productItems) {
-                String itemName = item.find(TITLE_SELECTOR).getText().trim();
+                String itemName = item.find(titleSelector).getText().trim();
                 if (itemName.equals(product.getName())) {
-                    elementHelper.clickToElement(item.find(ADD_TO_CART_SELECTOR), "Click Add To Cart button");
+                    elementHelper.clickToElement(item.find(addToCartSelector), "Click Add To Cart button");
                     break;
                 }
             }

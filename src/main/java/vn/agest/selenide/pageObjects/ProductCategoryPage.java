@@ -20,18 +20,17 @@ public class ProductCategoryPage extends BasePage {
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
     private SelenideElement selectedProductElement;
-    private final SelenideElement addToCartButton = selectedProductElement
-            .$x(".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]");
+    private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
+    private final String prodcutItemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
+    private final String productDetailPath = ".//div[contains(@class,'product-details')]";
+    private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
+    private final String productPricePath = ".//span[contains(@class,'price')]";
 
     @Getter
     private String selectedProductName;
     @Getter
     private String selectedProductPrice;
 
-    private final String PRODUCT_ITEMS_XPATH = "//div[contains(@class,'ajax-content clearfix')]/div";
-    private final String PRODUCT_DETAILS_REL_XPATH = ".//div[contains(@class,'product-details')]";
-    private final String PRODUCT_TITLE_REL_XPATH = ".//h2[contains(@class,'product-title')]";
-    private final String PRODUCT_PRICE_REL_XPATH = ".//span[contains(@class,'price')]";
     public ProductCategoryPage(ProductCategory category) {
         super(null);
         this.category = category;
@@ -92,15 +91,15 @@ public class ProductCategoryPage extends BasePage {
 
     @Step("Select a random product")
     public void selectRandomProduct() {
-        ElementsCollection visibleItems = $$x(PRODUCT_ITEMS_XPATH);
+        ElementsCollection visibleItems = $$x(prodcutItemsPath);
         if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
 
         selectedProductElement = visibleItems.get(new Random().nextInt(visibleItems.size()));
         selectedProductElement.scrollIntoView(true);
 
-        SelenideElement productDetails = selectedProductElement.$x(PRODUCT_DETAILS_REL_XPATH);
-        selectedProductName = productDetails.$x(PRODUCT_TITLE_REL_XPATH).getText().trim();
-        selectedProductPrice = productDetails.$x(PRODUCT_PRICE_REL_XPATH).getText().trim();
+        SelenideElement productDetails = selectedProductElement.$x(productDetailPath);
+        selectedProductName = productDetails.$x(productTitlePath).getText().trim();
+        selectedProductPrice = productDetails.$x(productPricePath).getText().trim();
 
         System.out.println("[INFO] Selected Product - Name: " + selectedProductName + ", Price: " + selectedProductPrice);
     }
@@ -111,6 +110,7 @@ public class ProductCategoryPage extends BasePage {
             throw new IllegalStateException("No product selected to add to cart.");
         }
 
+        SelenideElement addToCartButton = selectedProductElement.$x(addToCartPath);
         selectedProductElement.scrollIntoView(true);
 
         elementHelper.moveToElement(addToCartButton, "Add to Cart Button");

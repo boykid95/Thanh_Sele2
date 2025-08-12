@@ -24,12 +24,10 @@ public class ElementHelper {
     }
 
     public void waitForElementVisible(SelenideElement element, String elementName) {
-        Log.info(String.format("Waiting for element '%s' to be visible...", elementName));
         element.shouldBe(Condition.visible);
     }
 
     public void waitForElementClickable(SelenideElement element, String elementName) {
-        Log.info(String.format("Waiting for element '%s' to be clickable...", elementName));
         element.shouldBe(Condition.visible);
         element.shouldBe(Condition.enabled);
     }
@@ -37,7 +35,6 @@ public class ElementHelper {
     public void clickToElement(SelenideElement element, String elementName) {
         try {
             waitForElementClickable(element, elementName);
-            Log.info(String.format("Clicking element '%s'...", elementName));
             element.scrollIntoCenter();
             highlightElement(element);
             element.click();
@@ -49,7 +46,6 @@ public class ElementHelper {
     public void moveToElement(SelenideElement element, String elementName) {
         try {
             waitForElementVisible(element, elementName);
-            Log.info(String.format("Moving to element '%s'...", elementName));
             Actions actions = new Actions(WebDriverRunner.getWebDriver());
             actions.moveToElement(element).perform();
         } catch (Exception e) {
@@ -57,11 +53,11 @@ public class ElementHelper {
         }
     }
 
-    // Highlight element (Add a red border)
+    // Highlight element (Add a red border) (will be removed)
     public void highlightElement(SelenideElement element) {
         JavascriptExecutor js = (JavascriptExecutor) WebDriverRunner.getWebDriver();
         js.executeScript("arguments[0].style.border='3px solid red'", element);
-        Selenide.sleep(500); // Hold the highlight effect for 0.5 seconds
-        js.executeScript("arguments[0].style.border=''", element);  // Remove the highlight
+        Selenide.sleep(500);
+        js.executeScript("arguments[0].style.border=''", element);
     }
 }

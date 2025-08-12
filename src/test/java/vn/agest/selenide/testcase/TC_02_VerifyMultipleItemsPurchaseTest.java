@@ -2,11 +2,9 @@ package vn.agest.selenide.testcase;
 
 import io.qameta.allure.Description;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
-import vn.agest.selenide.common.constants.MsgConstants;
+import vn.agest.selenide.common.Constants;
 import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.*;
-import vn.agest.selenide.pageObjects.components.MiniCartComponent;
 import vn.agest.selenide.tests.BaseTest;
 
 import java.util.List;
@@ -35,7 +33,7 @@ public class TC_02_VerifyMultipleItemsPurchaseTest extends BaseTest {
         softAssert.assertTrue(orderStatusPage.isLoaded(), "Order status page did not load correctly");
         softAssert.assertEquals(
                 orderStatusPage.getOrderConfirmationMessage(),
-                MsgConstants.ORDER_CONFIRMATION,
+                Constants.ORDER_CONFIRMATION,
                 "❌ Order confirmation message mismatch"
         );
 

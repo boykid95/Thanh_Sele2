@@ -18,7 +18,6 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
         loginPage.navigateToLoginPage();
         loginPage.loginWithValidCredentials();
         homePage.navigateToAllDepartments();
-        homePage.navigateToProductCategory(ProductCategory.ELECTRONIC_COMPONENTS_SUPPLIES);
 
         ProductCategoryPage productCategoryPage = homePage.navigateToProductCategory(ProductCategory.ELECTRONIC_COMPONENTS_SUPPLIES);
         productCategoryPage.openCategoryPage();

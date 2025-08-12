@@ -20,9 +20,9 @@ public class CartPage extends BasePage {
     }
 
     private final ElementsCollection cartItems = $$x("//table[contains(@class,'shop_table')]//tr[contains(@class,'cart_item')]");
-    private static final String NAME_SELECTOR = ".cart-item-details .product-title";
-    private static final String PRICE_SELECTOR = "td.product-price .amount";
-    private static final String QUANTITY_SELECTOR = "td.product-quantity input";
+    private static final String nameSelector = ".cart-item-details .product-title";
+    private static final String priceSelector = "td.product-price .amount";
+    private static final String quantitySelector = "td.product-quantity input";
 
     private final SelenideElement checkOutButton = $x("//a[contains(@class,'checkout-button')]");
 
@@ -31,11 +31,12 @@ public class CartPage extends BasePage {
         List<Product> products = new ArrayList<>();
 
         for (SelenideElement item : cartItems) {
-            String name = item.find(NAME_SELECTOR).getText();
-            double price = PriceHelper.parsePrice(item.find(PRICE_SELECTOR).getText());
-            int quantity = Integer.parseInt(item.find(QUANTITY_SELECTOR).getValue());
+            String name = item.find(nameSelector).getText();
+            double unitPrice = PriceHelper.parsePrice(item.find(priceSelector).getText());
+            int quantity = Integer.parseInt(item.find(quantitySelector).getValue());
+            double totalPrice = unitPrice * quantity;
 
-            Product product = new Product(name, price, quantity);
+            Product product = new Product(name, totalPrice, quantity);
             products.add(product);
             product.logInfo("Cart product");
         }

@@ -9,7 +9,6 @@ import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
 import vn.agest.selenide.common.utilities.helpers.ElementHelper;
-import vn.agest.selenide.common.utilities.helpers.PageTitlesFileReader;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.enums.ProductCategory;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
@@ -30,8 +29,7 @@ public abstract class BasePage {
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
     private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
 
-    private static final String CATEGORY_LINK_XPATH_TEMPLATE =
-            "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
+    private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
     public BasePage(PageType pageType) {
         this.pageType = pageType;
@@ -44,7 +42,7 @@ public abstract class BasePage {
         closePopupIfPresent();
 
         String actualTitle = title();
-        String expectedTitle = PageTitlesFileReader.getTitleFromPageType(pageType);
+        String expectedTitle = ConfigFileReader.getTitleFromPageType(pageType);
 
         if (!actualTitle.equals(expectedTitle)) {
             throw new AssertionError("Page title mismatch! Expected: " + expectedTitle + ", Actual: " + actualTitle);
@@ -78,7 +76,7 @@ public abstract class BasePage {
     public ProductCategoryPage navigateToProductCategory(ProductCategory productCategory) {
         navigateToAllDepartments();
 
-        SelenideElement categoryLink = $x(String.format(CATEGORY_LINK_XPATH_TEMPLATE, productCategory.getDisplayName()));
+        SelenideElement categoryLink = $x(String.format(categoryLinkPath, productCategory.getDisplayName()));
         elementHelper.waitForElementVisible(categoryLink, productCategory.getDisplayName() + " Link");
         elementHelper.clickToElement(categoryLink, productCategory.getDisplayName() + " Link");
         elementHelper.waitToLoadPage();

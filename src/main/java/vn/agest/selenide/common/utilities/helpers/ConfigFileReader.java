@@ -16,17 +16,15 @@ public class ConfigFileReader {
 
     private static final Properties configProps = new Properties();
     private static final Properties credentialProps = new Properties();
+    private static final Properties pageTitlesProps = new Properties();
 
     static {
-        loadProperties();
-    }
-
-    @Step("Load config.properties and credentials.properties files")
-    private static void loadProperties() {
         loadFile("config.properties", configProps);
         loadFile("credentials.properties", credentialProps);
+        loadFile("pageTitles.properties", pageTitlesProps);
     }
 
+    @Step("Load file: {fileName}")
     private static void loadFile(String fileName, Properties targetProps) {
         try (InputStream inputStream = ConfigFileReader.class.getClassLoader()
                 .getResourceAsStream(fileName)) {
@@ -35,6 +33,7 @@ public class ConfigFileReader {
             }
             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                 targetProps.load(reader);
+                Allure.step("Loaded file successfully: " + fileName);
             }
         } catch (Exception e) {
             logger.error("Failed to load " + fileName, e);
@@ -43,52 +42,62 @@ public class ConfigFileReader {
         }
     }
 
+    @Step("Load properties file: {fileName}")
+    public static Properties loadPropertiesFile(String fileName) {
+        Properties props = new Properties();
+        loadFile(fileName, props);
+        return props;
+    }
+
     @Step("Get value from config.properties: {key}")
     public static String getProperty(String key) {
-        String value = configProps.getProperty(key);
-        if (value == null) {
-            logger.error("Config property key not found: {}", key);
-            throw new IllegalArgumentException("Config property key not found: " + key);
-        }
-        return value.trim();
+        return getValue(configProps, key, "Config");
     }
 
     @Step("Get value from credentials.properties: {key}")
     public static String getCredentialProperty(String key) {
-        String value = credentialProps.getProperty(key);
-        if (value == null) {
-            logger.error("Credential property key not found: {}", key);
-            throw new IllegalArgumentException("Credential property key not found: " + key);
-        }
-        return value.trim();
+        return getValue(credentialProps, key, "Credential");
     }
 
-    @Step("Get Username")
+    @Step("Get Username from credentials.properties")
     public static String getUsername() {
         return getCredentialProperty("username");
     }
 
-    @Step("Get Password")
+    @Step("Get Password from credentials.properties")
     public static String getPassword() {
         return getCredentialProperty("password");
     }
 
-    @Step("Get Browser")
+    @Step("Get Browser from config.properties")
     public static String getBrowser() {
         return getProperty("browser");
     }
 
+    @Step("Get Base URL from config.properties")
     public static String getBaseUrl() {
         return getProperty("homePageUrl");
     }
 
     @Step("Get URL from PageType: {pageType}")
     public static String getUrlFromPageType(PageType pageType) {
-        String url = configProps.getProperty(pageType.getUrlKey());
-        if (url == null) {
-            logger.error("URL key not found for PageType: {}", pageType.name());
-            throw new IllegalArgumentException("URL key not found for PageType: " + pageType.name());
+        return getValue(configProps, pageType.getUrlKey(), "Config");
+    }
+
+    @Step("Get Title from PageType: {pageType}")
+    public static String getTitleFromPageType(PageType pageType) {
+        return getValue(pageTitlesProps, pageType.getTitleKey(), "PageTitles");
+    }
+
+    @Step("Get value from {typeName} properties with key: {key}")
+    private static String getValue(Properties props, String key, String typeName) {
+        String value = props.getProperty(key);
+        if (value == null) {
+            logger.error("❌ {} property key not found: {}", typeName, key);
+            Allure.step("❌ " + typeName + " property key not found: " + key);
+            throw new IllegalArgumentException(typeName + " property key not found: " + key);
         }
-        return url.trim();
+        Allure.step("✅ Found key [" + key + "] in " + typeName + " with value: " + value.trim());
+        return value.trim();
     }
 }
