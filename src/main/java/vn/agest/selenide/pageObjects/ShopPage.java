@@ -8,8 +8,7 @@ import vn.agest.selenide.common.utilities.other.Log;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.$$x;
@@ -75,6 +74,7 @@ public class ShopPage extends BasePage {
                 String itemName = item.find(titleSelector).getText().trim();
                 if (itemName.equals(product.getName())) {
                     elementHelper.clickToElement(item.find(addToCartSelector), "Click Add To Cart button");
+                    waitForAddToCartLoaderToDisappear();
                     break;
                 }
             }

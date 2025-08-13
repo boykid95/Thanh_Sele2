@@ -11,10 +11,15 @@ import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
 import vn.agest.selenide.common.utilities.helpers.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.enums.ProductCategory;
+import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
 import vn.agest.selenide.common.utilities.other.Log;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class BasePage {
 
@@ -28,6 +33,7 @@ public abstract class BasePage {
     private final SelenideElement backToTopButton = $x("//div[contains(@class, 'back-top')]");
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
     private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
+    private final SelenideElement addToCartLoader = $x("//div[@class='et-loader']");
 
     private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
@@ -114,5 +120,26 @@ public abstract class BasePage {
         elementHelper.waitForElementClickable(shopLink, "Shop Link");
         elementHelper.clickToElement(shopLink, "Shop Link");
         return new ShopPage();
+    }
+
+    public static List<Product> mergeProductList(List<Product> products) {
+        Map<String, Product> merged = new LinkedHashMap<>();
+        for (Product p : products) {
+            merged.merge(
+                    p.getName(),
+                    new Product(p.getName(), p.getPrice(), p.getQuantity()),
+                    (oldP, newP) -> {
+                        oldP.setQuantity(oldP.getQuantity() + newP.getQuantity());
+                        oldP.setPrice(oldP.getPrice() + newP.getPrice());
+                        return oldP;
+                    }
+            );
+        }
+        return new ArrayList<>(merged.values());
+    }
+
+    public void waitForAddToCartLoaderToDisappear() {
+        addToCartLoader.should(Condition.appear);
+        addToCartLoader.should(Condition.exist);
     }
 }

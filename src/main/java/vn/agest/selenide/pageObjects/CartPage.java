@@ -8,7 +8,9 @@ import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;

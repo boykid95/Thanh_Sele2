@@ -116,8 +116,7 @@ public class ProductCategoryPage extends BasePage {
         elementHelper.moveToElement(addToCartButton, "Add to Cart Button");
         elementHelper.waitForElementVisible(addToCartButton, "Add to Cart Button");
         elementHelper.clickToElement(addToCartButton, "Add to Cart Button");
-
-        System.out.println("[INFO] Clicked 'Add to Cart' for selected product: " + selectedProductName);
+        waitForAddToCartLoaderToDisappear();
     }
 
 }

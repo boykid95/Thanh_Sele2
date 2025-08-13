@@ -9,6 +9,8 @@ import vn.agest.selenide.tests.BaseTest;
 
 import java.util.List;
 
+import static vn.agest.selenide.pageObjects.BasePage.mergeProductList;
+
 public class TC_02_VerifyMultipleItemsPurchaseTest extends BaseTest {
 
     @Test(description = "Verify users can buy multiple items successfully")
@@ -19,12 +21,13 @@ public class TC_02_VerifyMultipleItemsPurchaseTest extends BaseTest {
         loginPage.loginWithValidCredentials();
 
         ShopPage shopPage = homePage.navigateToShopPage();
-        List<Product> selectedProducts = shopPage.getRandomProducts(10);
+        List<Product> selectedProducts = shopPage.getRandomProducts(15);
         shopPage.addProductsToCart(selectedProducts);
+        List<Product> mergedSelectedProducts = mergeProductList(selectedProducts);
 
         CartPage cartPage = shopPage.goToCart();
         List<Product> actualCartItems = cartPage.getCartProductInfo();
-        softAssert.assertEquals(actualCartItems, selectedProducts, "Verify all selected products are in cart.");
+        softAssert.assertEquals(actualCartItems, mergedSelectedProducts, "Verify all selected products are in cart.");
 
         CheckoutPage checkoutPage = cartPage.checkOut();
         softAssert.assertTrue(checkoutPage.isLoaded(), "Checkout page did not load correctly");

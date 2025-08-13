@@ -44,7 +44,7 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
         CheckoutPage checkoutPage = miniCart.clickCheckoutButton();
         softAssert.assertTrue(
                 checkoutPage.isLoaded(),
-                "Checkout page is not loadedAnthony Murabito successfully"
+                "Checkout page is not loaded successfully"
         );
 
         softAssert.assertTrue(
