@@ -3,14 +3,12 @@ package vn.agest.selenide.pageObjects;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import vn.agest.selenide.common.utilities.helpers.PriceHelper;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
@@ -18,7 +16,7 @@ import static com.codeborne.selenide.Selenide.$x;
 public class CartPage extends BasePage {
 
     public CartPage() {
-        super(PageType.CART_PAGE);
+        super(new ElementHelper(),PageType.CART_PAGE);
     }
 
     private final ElementsCollection cartItems = $$x("//table[contains(@class,'shop_table')]//tr[contains(@class,'cart_item')]");
@@ -34,7 +32,7 @@ public class CartPage extends BasePage {
 
         for (SelenideElement item : cartItems) {
             String name = item.find(nameSelector).getText();
-            double unitPrice = PriceHelper.parsePrice(item.find(priceSelector).getText());
+            double unitPrice = parsePrice(item.find(priceSelector).getText());
             int quantity = Integer.parseInt(item.find(quantitySelector).getValue());
             double totalPrice = unitPrice * quantity;
 

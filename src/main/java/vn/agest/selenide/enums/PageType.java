@@ -1,5 +1,8 @@
 package vn.agest.selenide.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PageType {
     HOME_PAGE("homePageUrl", "homePageTitle"),
     LOGIN_PAGE("loginPageUrl", "loginPageTitle"),
@@ -15,13 +18,5 @@ public enum PageType {
     PageType(String urlKey, String titleKey) {
         this.urlKey = urlKey;
         this.titleKey = titleKey;
-    }
-
-    public String getUrlKey() {
-        return urlKey;
-    }
-
-    public String getTitleKey() {
-        return titleKey;
     }
 }

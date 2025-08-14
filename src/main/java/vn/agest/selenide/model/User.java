@@ -2,7 +2,7 @@ package vn.agest.selenide.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
+import vn.agest.selenide.common.ConfigFileReader;
 
 @Data
 @AllArgsConstructor

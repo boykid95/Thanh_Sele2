@@ -6,14 +6,16 @@ import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Step;
 import lombok.Getter;
-import vn.agest.selenide.common.utilities.other.Log;
+import lombok.extern.log4j.Log4j;
+import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.enums.PageType;
-import vn.agest.selenide.common.utilities.helpers.ElementHelper;
+import vn.agest.selenide.common.ElementHelper;
 
 import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$x;
 
+@Log4j
 public class CheckoutPage extends BasePage {
 
     private final ElementHelper elementHelper = new ElementHelper();
@@ -53,7 +55,7 @@ public class CheckoutPage extends BasePage {
     private String billingEmail;
 
     public CheckoutPage() {
-        super(PageType.CHECKOUT_PAGE);
+        super(new ElementHelper(), PageType.CHECKOUT_PAGE);
     }
 
     @Step("Verify Checkout page is loaded")
@@ -73,7 +75,7 @@ public class CheckoutPage extends BasePage {
         billingPhone = phoneInput.getValue().trim();
         billingEmail = emailInput.getValue().trim();
 
-        Log.info("Captured Billing Info: " + "FirstName=" + billingFirstName + ", LastName=" + billingLastName + ", Company=" + billingCompany + ", Street=" + billingStreet + ", City=" + billingCity + ", Postcode=" + billingPostcode + ", Country=" + billingCountry + ", Phone=" + billingPhone + ", Email=" + billingEmail);
+        log.info("Captured Billing Info: " + "FirstName=" + billingFirstName + ", LastName=" + billingLastName + ", Company=" + billingCompany + ", Street=" + billingStreet + ", City=" + billingCity + ", Postcode=" + billingPostcode + ", Country=" + billingCountry + ", Phone=" + billingPhone + ", Email=" + billingEmail);
     }
 
     @Step("Get Billing Full Name")
@@ -95,7 +97,7 @@ public class CheckoutPage extends BasePage {
         boolean nameMatch = actualName.toLowerCase().contains(expectedName.toLowerCase());
         boolean priceMatch = actualPrice.replaceAll("[^0-9.]", "").equals(expectedPrice.replaceAll("[^0-9.]", ""));
 
-        Log.info("Checkout Verify - Name Match: " + nameMatch + ", Price Match: " + priceMatch);
+        log.info("Checkout Verify - Name Match: " + nameMatch + ", Price Match: " + priceMatch);
 
         return nameMatch && priceMatch;
     }
@@ -105,7 +107,7 @@ public class CheckoutPage extends BasePage {
         elementHelper.clickToElement(placeOrderButton, "Place Order Button");
         waitForLoadingOverlay();
         Selenide.Wait().until(webDriver -> WebDriverRunner.url().contains("/checkout/order-received/"));
-        elementHelper.waitToLoadPage();
+        DriverUtils.waitToLoadPage();
         return new OrderStatusPage();
     }
 
@@ -114,7 +116,7 @@ public class CheckoutPage extends BasePage {
         try {
             loadingOverlay.shouldBe(Condition.visible, Duration.ofSeconds(5));
         } catch (Exception e) {
-            Log.info("Loading overlay did not appear immediately, continuing...");
+            log.info("Loading overlay did not appear immediately, continuing...");
         }
         loadingOverlay.shouldNotBe(Condition.visible, Duration.ofSeconds(30));
     }

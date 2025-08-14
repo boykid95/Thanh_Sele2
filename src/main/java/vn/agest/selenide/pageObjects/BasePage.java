@@ -7,13 +7,14 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
-import vn.agest.selenide.common.utilities.helpers.ElementHelper;
+import lombok.extern.log4j.Log4j;
+import vn.agest.selenide.common.ConfigFileReader;
+import vn.agest.selenide.common.DriverUtils;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.enums.ProductCategory;
 import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
-import vn.agest.selenide.common.utilities.other.Log;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j
 public abstract class BasePage {
-
-    protected final ElementHelper elementHelper = new ElementHelper();
+    protected final ElementHelper elementHelper;
     protected final PageType pageType;
 
     private final SelenideElement loginButton = $x("//span[contains(@class, 'flex-inline')]//span[contains(text(), 'Log in / Sign u')]");
@@ -37,22 +38,19 @@ public abstract class BasePage {
 
     private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
-    public BasePage(PageType pageType) {
+    protected BasePage(ElementHelper elementHelper, PageType pageType) {
+        this.elementHelper = elementHelper;
         this.pageType = pageType;
     }
 
     @Step("Open page with defined URL and verify title")
     public void open() {
-        Selenide.open(ConfigFileReader.getUrlFromPageType(pageType));
-        elementHelper.waitToLoadPage();
+        String url = ConfigFileReader.getUrlFromPageType(pageType);
+        log.info(String.format("🌐 Opening page [%s] with URL: %s", pageType.name(), url));
+        Selenide.open(url);
+        DriverUtils.waitToLoadPage();
         closePopupIfPresent();
-
-        String actualTitle = title();
-        String expectedTitle = ConfigFileReader.getTitleFromPageType(pageType);
-
-        if (!actualTitle.equals(expectedTitle)) {
-            throw new AssertionError("Page title mismatch! Expected: " + expectedTitle + ", Actual: " + actualTitle);
-        }
+        verifyPageTitle(pageType);
     }
 
     @Step("Close popup")
@@ -63,6 +61,26 @@ public abstract class BasePage {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    @Step("Verify page title for {pageType}")
+    public void verifyPageTitle(PageType pageType) {
+        String actualTitle = title().trim();
+        String expectedTitle = ConfigFileReader.getTitleFromPageType(pageType).trim();
+
+        log.info(String.format("🔍 Verifying page title for [%s] - Expected: '%s' | Actual: '%s'",
+                pageType.name(), expectedTitle, actualTitle));
+
+        if (!actualTitle.equalsIgnoreCase(expectedTitle)) {
+            log.error(String.format("❌ Page title mismatch for [%s]! Expected: '%s', Actual: '%s'",
+                    pageType.name(), expectedTitle, actualTitle));
+            throw new AssertionError(
+                    String.format("Page title mismatch! Expected: '%s', Actual: '%s'",
+                            expectedTitle, actualTitle)
+            );
+        }
+
+        log.info(String.format("✅ Page title verified successfully for [%s]", pageType.name()));
     }
 
     @Step("Navigate to Login Page")
@@ -81,11 +99,10 @@ public abstract class BasePage {
     @Step("Navigate to product category: {productCategory}")
     public ProductCategoryPage navigateToProductCategory(ProductCategory productCategory) {
         navigateToAllDepartments();
-
         SelenideElement categoryLink = $x(String.format(categoryLinkPath, productCategory.getDisplayName()));
         elementHelper.waitForElementVisible(categoryLink, productCategory.getDisplayName() + " Link");
         elementHelper.clickToElement(categoryLink, productCategory.getDisplayName() + " Link");
-        elementHelper.waitToLoadPage();
+        DriverUtils.waitToLoadPage();
 
         return new ProductCategoryPage(productCategory);
     }
@@ -107,7 +124,7 @@ public abstract class BasePage {
     @Step("Dismiss Cookie Notice if present")
     public void dismissCookieNoticeIfPresent() {
         if (cookieNoticeDialog.isDisplayed()) {
-            Log.info("Cookie Notice detected. Hiding it...");
+            log.info("Cookie Notice detected. Hiding it...");
             Selenide.executeJavaScript("arguments[0].style.display='none';", cookieNoticeDialog);
             cookieNoticeDialog.shouldNotBe(Condition.visible);
         }
@@ -122,24 +139,45 @@ public abstract class BasePage {
         return new ShopPage();
     }
 
+    @Step("Merge product list by name and sum their quantities and prices")
     public static List<Product> mergeProductList(List<Product> products) {
         Map<String, Product> merged = new LinkedHashMap<>();
         for (Product p : products) {
-            merged.merge(
-                    p.getName(),
-                    new Product(p.getName(), p.getPrice(), p.getQuantity()),
-                    (oldP, newP) -> {
-                        oldP.setQuantity(oldP.getQuantity() + newP.getQuantity());
-                        oldP.setPrice(oldP.getPrice() + newP.getPrice());
-                        return oldP;
-                    }
-            );
+            merged.merge(p.getName(), new Product(p.getName(), p.getPrice(), p.getQuantity()), (oldP, newP) -> {
+                oldP.setQuantity(oldP.getQuantity() + newP.getQuantity());
+                oldP.setPrice(oldP.getPrice() + newP.getPrice());
+                return oldP;
+            });
         }
         return new ArrayList<>(merged.values());
     }
 
+    @Step("Wait for the Add to Cart loader icon to appear and disappear")
     public void waitForAddToCartLoaderToDisappear() {
-        addToCartLoader.should(Condition.appear);
-        addToCartLoader.should(Condition.exist);
+        try {
+            addToCartLoader.shouldBe(Condition.visible, Duration.ofSeconds(5));
+        } catch (Exception e) {
+            log.info("⚡ Add to Cart loader did not appear within 5s, possibly processed instantly.");
+        }
+        addToCartLoader.shouldNotBe(Condition.visible, Duration.ofSeconds(30));
+    }
+
+    @Step("Parse price string: '{priceText}' into double value")
+    public static double parsePrice(String priceText) {
+        if (priceText == null || priceText.isEmpty()) {
+            throw new IllegalArgumentException("Price text cannot be null or empty");
+        }
+
+        String cleaned = priceText.replaceAll("[^\\d.,]", "").replaceAll(",", "");
+
+        if (cleaned.isEmpty()) {
+            throw new IllegalArgumentException("Invalid price format after cleaning: " + priceText);
+        }
+
+        try {
+            return Double.parseDouble(cleaned);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Failed to parse price: " + priceText, e);
+        }
     }
 }

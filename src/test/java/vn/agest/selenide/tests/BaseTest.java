@@ -2,12 +2,12 @@ package vn.agest.selenide.tests;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import lombok.extern.log4j.Log4j;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.asserts.SoftAssert;
-import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
-import vn.agest.selenide.common.utilities.other.Log;
+import vn.agest.selenide.common.ConfigFileReader;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.pageObjects.HomePage;
 import vn.agest.selenide.pageObjects.LoginPage;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 
+@Log4j
 public class BaseTest {
     public String testCaseName;
     public HomePage homePage = new HomePage();
@@ -35,7 +36,7 @@ public class BaseTest {
 
             testCaseName = this.getClass().getSimpleName();
         } catch (Exception e) {
-            Log.error("Error: " + Arrays.toString(e.getStackTrace()));
+            log.error("Error: " + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -45,7 +46,7 @@ public class BaseTest {
             Selenide.sleep(2000);
             closeWebDriver();
         } catch (Exception e) {
-            Log.error("Error: " + Arrays.toString(e.getStackTrace()));
+            log.error("Error: " + Arrays.toString(e.getStackTrace()));
         }
     }
 }

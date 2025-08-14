@@ -3,8 +3,8 @@ package vn.agest.selenide.pageObjects;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import vn.agest.selenide.common.utilities.helpers.ElementHelper;
-import vn.agest.selenide.common.utilities.other.Log;
+import lombok.extern.log4j.Log4j;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
 
@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
+@Log4j
 public class ShopPage extends BasePage {
-
-    private final ElementHelper elementHelper = new ElementHelper();
 
     private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
     private final SelenideElement adCloseButton = $x("//div[@class='pum-close']");
@@ -28,7 +27,7 @@ public class ShopPage extends BasePage {
     private static final String normalPriceSelector = ".products .price .amount";
 
     public ShopPage() {
-        super(PageType.SHOP_PAGE);
+        super(new ElementHelper(),PageType.SHOP_PAGE);
         closeAdIfPresent();
     }
 
@@ -36,7 +35,7 @@ public class ShopPage extends BasePage {
     private void closeAdIfPresent() {
         if (adCloseButton.exists()) {
             elementHelper.clickToElement(adCloseButton, "Click Close Advertisement");
-            Log.info("Advertisement closed successfully.");
+            log.info("Advertisement closed successfully.");
         }
     }
 

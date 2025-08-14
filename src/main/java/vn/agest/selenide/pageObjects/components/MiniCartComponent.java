@@ -2,7 +2,7 @@ package vn.agest.selenide.pageObjects.components;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import vn.agest.selenide.common.utilities.helpers.ElementHelper;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.pageObjects.CheckoutPage;
 import vn.agest.selenide.pageObjects.ProductCategoryPage;
 
@@ -30,8 +30,6 @@ public class MiniCartComponent {
         boolean nameMatch = actualName.toLowerCase().contains(expectedName.toLowerCase());
         boolean priceMatch = actualPrice.replaceAll("[^0-9.]", "")
                 .equals(expectedPrice.replaceAll("[^0-9.]", ""));
-
-        System.out.println("[INFO] MiniCart Verify - Name Match: " + nameMatch + ", Price Match: " + priceMatch);
 
         return nameMatch && priceMatch;
     }

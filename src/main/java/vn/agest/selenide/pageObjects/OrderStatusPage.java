@@ -3,8 +3,8 @@ package vn.agest.selenide.pageObjects;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import vn.agest.selenide.common.utilities.helpers.PriceHelper;
-import vn.agest.selenide.common.utilities.other.Log;
+import lombok.extern.log4j.Log4j;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
 
@@ -14,6 +14,7 @@ import java.util.List;
 import static com.codeborne.selenide.Selenide.$$x;
 import static com.codeborne.selenide.Selenide.$x;
 
+@Log4j
 public class OrderStatusPage extends BasePage {
 
     private final SelenideElement orderReceivedTitle = $x("//p[contains(@class,'woocommerce-thankyou-order-received')]");
@@ -30,7 +31,7 @@ public class OrderStatusPage extends BasePage {
     private final ElementsCollection orderItemQuantities = $$x("//td[contains(@class,'product-name')]//strong");
 
     public OrderStatusPage() {
-        super(PageType.ORDER_STATUS_PAGE);
+        super(new ElementHelper(),PageType.ORDER_STATUS_PAGE);
     }
 
     @Step("Verify Order Status page is loaded")
@@ -57,7 +58,7 @@ public class OrderStatusPage extends BasePage {
 
         boolean billingMatch = actualBillingInfo.equalsIgnoreCase(expectedBillingInfo);
         if (!billingMatch) {
-            Log.error("Billing address mismatch!" +
+            log.error("Billing address mismatch!" +
                     "\nExpected:\n" + expectedBillingInfo +
                     "\nActual:\n" + actualBillingInfo);
         }
@@ -78,10 +79,10 @@ public class OrderStatusPage extends BasePage {
                 .equals(expectedItemPrice.replaceAll("[^0-9.]", ""));
 
         if (!itemNameMatch) {
-            Log.error("Item name mismatch. Expected: " + expectedItemName + ", Actual: " + actualItemName);
+            log.error("Item name mismatch. Expected: " + expectedItemName + ", Actual: " + actualItemName);
         }
         if (!itemPriceMatch) {
-            Log.error("Item price mismatch. Expected: " + expectedItemPrice + ", Actual: " + actualItemPrice);
+            log.error("Item price mismatch. Expected: " + expectedItemPrice + ", Actual: " + actualItemPrice);
         }
 
         return itemNameMatch && itemPriceMatch;
@@ -92,7 +93,7 @@ public class OrderStatusPage extends BasePage {
         List<Product> products = new ArrayList<>();
         for (int i = 0; i < orderItemNames.size(); i++) {
             String name = orderItemNames.get(i).getText().trim();
-            double price = PriceHelper.parsePrice(orderItemPrices.get(i).getText());
+            double price = parsePrice(orderItemPrices.get(i).getText());
             String rawQuantity = orderItemQuantities.get(i).getText().trim();
 
             int quantity = 1;

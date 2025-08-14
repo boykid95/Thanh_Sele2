@@ -1,27 +1,15 @@
-package vn.agest.selenide.common.utilities.helpers;
+package vn.agest.selenide.common;
 
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+import lombok.extern.log4j.Log4j;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.interactions.Actions;
-import vn.agest.selenide.common.utilities.other.Log;
 
+@Log4j
 public class ElementHelper {
-
-    public void waitToLoadPage() {
-        try {
-            Selenide.Wait().until(driver ->
-                    ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete")
-            );
-        } catch (TimeoutException e) {
-            Log.error("Page load timeout");
-            throw new RuntimeException("Page load timeout", e);
-        }
-    }
 
     public void waitForElementVisible(SelenideElement element, String elementName) {
         element.shouldBe(Condition.visible);
@@ -39,7 +27,7 @@ public class ElementHelper {
             highlightElement(element);
             element.click();
         } catch (Exception e) {
-            Log.error("Failed to click element '" + elementName + "'. " + e.getMessage());
+            log.info("Failed to click element '" + elementName + "'. " + e.getMessage());
         }
     }
 
@@ -49,7 +37,7 @@ public class ElementHelper {
             Actions actions = new Actions(WebDriverRunner.getWebDriver());
             actions.moveToElement(element).perform();
         } catch (Exception e) {
-            Log.error("Failed to move to element '" + elementName + "'. " + e.getMessage());
+            log.error("Failed to move to element '" + elementName + "'. " + e.getMessage());
         }
     }
 

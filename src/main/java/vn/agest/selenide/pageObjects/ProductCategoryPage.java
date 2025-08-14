@@ -5,34 +5,33 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import lombok.Getter;
-import vn.agest.selenide.common.utilities.helpers.ConfigFileReader;
+import vn.agest.selenide.common.ConfigFileReader;
+import vn.agest.selenide.common.DriverUtils;
+import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.ProductCategory;
+import vn.agest.selenide.model.Product;
 
 import java.util.Random;
 
 import static com.codeborne.selenide.Selenide.*;
 
 public class ProductCategoryPage extends BasePage {
+
     private final ProductCategory category;
 
     private final SelenideElement gridViewButton = $x("//div[contains(@class,'switch-grid')]");
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
     private SelenideElement selectedProductElement;
+
     private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
     private final String prodcutItemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
     private final String productDetailPath = ".//div[contains(@class,'product-details')]";
     private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
     private final String productPricePath = ".//span[contains(@class,'price')]";
 
-    @Getter
-    private String selectedProductName;
-    @Getter
-    private String selectedProductPrice;
-
     public ProductCategoryPage(ProductCategory category) {
-        super(null);
+        super(new ElementHelper(), null);
         this.category = category;
     }
 
@@ -41,7 +40,7 @@ public class ProductCategoryPage extends BasePage {
         String baseUrl = ConfigFileReader.getBaseUrl();
         String pageUrl = baseUrl + category.getUrlPath();
         Selenide.open(pageUrl);
-        elementHelper.waitToLoadPage();
+        DriverUtils.waitToLoadPage();
 
         String actualTitle = title();
         String expectedTitle = category.getExpectedTitle();
@@ -79,7 +78,7 @@ public class ProductCategoryPage extends BasePage {
         }
 
         waitForLoadingComplete();
-        elementHelper.waitToLoadPage();
+        DriverUtils.waitToLoadPage();
     }
 
     @Step("Wait until product list loading completes")
@@ -90,7 +89,7 @@ public class ProductCategoryPage extends BasePage {
     }
 
     @Step("Select a random product")
-    public void selectRandomProduct() {
+    public Product selectRandomProduct() {
         ElementsCollection visibleItems = $$x(prodcutItemsPath);
         if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
 
@@ -98,10 +97,12 @@ public class ProductCategoryPage extends BasePage {
         selectedProductElement.scrollIntoView(true);
 
         SelenideElement productDetails = selectedProductElement.$x(productDetailPath);
-        selectedProductName = productDetails.$x(productTitlePath).getText().trim();
-        selectedProductPrice = productDetails.$x(productPricePath).getText().trim();
+        String name = productDetails.$x(productTitlePath).getText().trim();
+        String price = productDetails.$x(productPricePath).getText().trim();
 
-        System.out.println("[INFO] Selected Product - Name: " + selectedProductName + ", Price: " + selectedProductPrice);
+        System.out.println("[INFO] Selected Product - Name: " + name + ", Price: " + price);
+
+        return new Product(name, price);
     }
 
     @Step("Click 'Add to Cart' button for selected product")
@@ -118,5 +119,4 @@ public class ProductCategoryPage extends BasePage {
         elementHelper.clickToElement(addToCartButton, "Add to Cart Button");
         waitForAddToCartLoaderToDisappear();
     }
-
 }

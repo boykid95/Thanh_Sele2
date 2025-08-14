@@ -1,7 +1,8 @@
-package vn.agest.selenide.common.utilities.helpers;
+package vn.agest.selenide.common;
 
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import vn.agest.selenide.enums.PageType;
@@ -40,13 +41,6 @@ public class ConfigFileReader {
             Allure.step("Error loading " + fileName + ": " + e.getMessage());
             throw new RuntimeException("Error loading " + fileName, e);
         }
-    }
-
-    @Step("Load properties file: {fileName}")
-    public static Properties loadPropertiesFile(String fileName) {
-        Properties props = new Properties();
-        loadFile(fileName, props);
-        return props;
     }
 
     @Step("Get value from config.properties: {key}")
