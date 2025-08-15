@@ -67,22 +67,18 @@ public class OrderStatusPage extends BasePage {
     }
 
     @Step("Verify single ordered item matches selected product")
-    public boolean verifyOrderItemDetails(ProductCategoryPage productPage) {
+    public boolean verifyOrderItemDetails(Product expectedProduct) {
         String actualItemName = orderItemName.getText().trim();
-        String actualItemPrice = orderItemPrice.getText().trim();
+        double actualItemPrice = parsePrice(orderItemPrice.getText());
 
-        String expectedItemName = productPage.getSelectedProductName();
-        String expectedItemPrice = productPage.getSelectedProductPrice();
-
-        boolean itemNameMatch = actualItemName.equalsIgnoreCase(expectedItemName);
-        boolean itemPriceMatch = actualItemPrice.replaceAll("[^0-9.]", "")
-                .equals(expectedItemPrice.replaceAll("[^0-9.]", ""));
+        boolean itemNameMatch = actualItemName.equalsIgnoreCase(expectedProduct.getName());
+        boolean itemPriceMatch = actualItemPrice == expectedProduct.getPrice();
 
         if (!itemNameMatch) {
-            log.error("Item name mismatch. Expected: " + expectedItemName + ", Actual: " + actualItemName);
+            log.error("Item name mismatch. Expected: " + expectedProduct.getName() + ", Actual: " + actualItemName);
         }
         if (!itemPriceMatch) {
-            log.error("Item price mismatch. Expected: " + expectedItemPrice + ", Actual: " + actualItemPrice);
+            log.error("Item price mismatch. Expected: " + expectedProduct.getPrice() + ", Actual: " + actualItemPrice);
         }
 
         return itemNameMatch && itemPriceMatch;

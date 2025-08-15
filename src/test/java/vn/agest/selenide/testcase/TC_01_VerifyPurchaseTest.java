@@ -66,7 +66,7 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
         );
 
         softAssert.assertTrue(
-                orderStatusPage.verifyOrderItemDetails(productCategoryPage),
+                orderStatusPage.verifyOrderItemDetails(productCategoryPage.getSelectedProduct()),
                 "Order item details mismatch"
         );
 

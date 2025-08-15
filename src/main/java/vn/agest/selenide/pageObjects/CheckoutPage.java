@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.common.ElementHelper;
+import vn.agest.selenide.model.Product;
 
 import java.time.Duration;
 
@@ -89,16 +90,15 @@ public class CheckoutPage extends BasePage {
         elementHelper.waitForElementVisible(orderItemPrice, "Order Item Price");
 
         String actualName = orderItemName.getText().trim();
-        String actualPrice = orderItemPrice.getText().trim();
+        String actualPriceString = orderItemPrice.getText().trim();
+        double actualPrice = Double.parseDouble(actualPriceString.replaceAll("[^0-9.]", ""));
 
-        String expectedName = productCategoryPage.getSelectedProductName();
-        String expectedPrice = productCategoryPage.getSelectedProductPrice();
+        Product expectedProduct = productCategoryPage.getSelectedProduct();
 
-        boolean nameMatch = actualName.toLowerCase().contains(expectedName.toLowerCase());
-        boolean priceMatch = actualPrice.replaceAll("[^0-9.]", "").equals(expectedPrice.replaceAll("[^0-9.]", ""));
+        boolean nameMatch = actualName.equalsIgnoreCase(expectedProduct.getName());
+        boolean priceMatch = actualPrice == expectedProduct.getPrice();
 
         log.info("Checkout Verify - Name Match: " + nameMatch + ", Price Match: " + priceMatch);
-
         return nameMatch && priceMatch;
     }
 

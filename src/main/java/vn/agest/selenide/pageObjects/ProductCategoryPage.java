@@ -5,6 +5,8 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.ConfigFileReader;
 import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.common.ElementHelper;
@@ -15,6 +17,7 @@ import java.util.Random;
 
 import static com.codeborne.selenide.Selenide.*;
 
+@Log4j
 public class ProductCategoryPage extends BasePage {
 
     private final ProductCategory category;
@@ -22,17 +25,23 @@ public class ProductCategoryPage extends BasePage {
     private final SelenideElement gridViewButton = $x("//div[contains(@class,'switch-grid')]");
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
-    private SelenideElement selectedProductElement;
 
     private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
-    private final String prodcutItemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
+    private final String productItemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
     private final String productDetailPath = ".//div[contains(@class,'product-details')]";
     private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
     private final String productPricePath = ".//span[contains(@class,'price')]";
 
+    private Product selectedProduct;
+
     public ProductCategoryPage(ProductCategory category) {
         super(new ElementHelper(), null);
         this.category = category;
+    }
+
+    @Step("Get selected product")
+    public Product getSelectedProduct() {
+        return selectedProduct;
     }
 
     @Step("Open Product Category Page")
@@ -89,7 +98,7 @@ public class ProductCategoryPage extends BasePage {
     }
 
     @Step("Select a random product")
-    public Product selectRandomProduct() {
+    public void selectRandomProduct() {
         ElementsCollection visibleItems = $$x(prodcutItemsPath);
         if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
 
@@ -98,11 +107,12 @@ public class ProductCategoryPage extends BasePage {
 
         SelenideElement productDetails = selectedProductElement.$x(productDetailPath);
         String name = productDetails.$x(productTitlePath).getText().trim();
-        String price = productDetails.$x(productPricePath).getText().trim();
+        String priceString = productDetails.$x(productPricePath).getText().trim();
 
-        System.out.println("[INFO] Selected Product - Name: " + name + ", Price: " + price);
+        double price = Double.parseDouble(priceString.replaceAll("[^0-9.]", ""));
 
-        return new Product(name, price);
+        selectedProduct = new Product(name, price, 1);
+        selectedProduct.logInfo("[INFO] Selected Product");
     }
 
     @Step("Click 'Add to Cart' button for selected product")

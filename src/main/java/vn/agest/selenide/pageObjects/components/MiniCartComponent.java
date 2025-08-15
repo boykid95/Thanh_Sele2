@@ -2,12 +2,16 @@ package vn.agest.selenide.pageObjects.components;
 
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.ElementHelper;
+import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.CheckoutPage;
 import vn.agest.selenide.pageObjects.ProductCategoryPage;
 
 import static com.codeborne.selenide.Selenide.$x;
+import static vn.agest.selenide.pageObjects.BasePage.parsePrice;
 
+@Log4j
 public class MiniCartComponent {
 
     private final ElementHelper elementHelper = new ElementHelper();
@@ -22,14 +26,20 @@ public class MiniCartComponent {
         elementHelper.waitForElementVisible(miniCartProductName, "Mini Cart Product Name");
         elementHelper.waitForElementVisible(miniCartProductPrice, "Mini Cart Product Price");
 
-        String actualName = miniCartProductName.getText().trim();
-        String actualPrice = miniCartProductPrice.getText().trim();
-        String expectedName = productPage.getSelectedProductName();
-        String expectedPrice = productPage.getSelectedProductPrice();
+        Product expected = productPage.getSelectedProduct();
 
-        boolean nameMatch = actualName.toLowerCase().contains(expectedName.toLowerCase());
-        boolean priceMatch = actualPrice.replaceAll("[^0-9.]", "")
-                .equals(expectedPrice.replaceAll("[^0-9.]", ""));
+        String actualName = miniCartProductName.getText().trim();
+        double actualPrice = parsePrice(miniCartProductPrice.getText());
+
+        boolean nameMatch = actualName.equalsIgnoreCase(expected.getName());
+        boolean priceMatch = actualPrice == expected.getPrice();
+
+        if (!nameMatch) {
+            log.error("❌ Mini Cart name mismatch. Expected: " + expected.getName() + ", Actual: " + actualName);
+        }
+        if (!priceMatch) {
+            log.error("❌ Mini Cart price mismatch. Expected: " + expected.getPrice() + ", Actual: " + actualPrice);
+        }
 
         return nameMatch && priceMatch;
     }
