@@ -58,9 +58,9 @@ public class ShopPage extends BasePage {
                 .map(productElement -> {
                     String name = productElement.find(titleSelector).getText();
                     String priceText = extractPrice(productElement);
-                    double price = Double.parseDouble(priceText.replace("$", "").replace(",", "").trim());
+                    double price = BasePage.parsePrice(priceText);
                     Product product = new Product(name, price, 1);
-                    product.logInfo("Selected random product");
+                    product.logInfo("[INFO] Selected random product: " + name + " - " + price);
                     return product;
                 })
                 .collect(Collectors.toList());

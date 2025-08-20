@@ -5,7 +5,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.ConfigFileReader;
 import vn.agest.selenide.common.DriverUtils;
@@ -22,12 +21,13 @@ public class ProductCategoryPage extends BasePage {
 
     private final ProductCategory category;
 
+    private SelenideElement selectedProductElement;
     private final SelenideElement gridViewButton = $x("//div[contains(@class,'switch-grid')]");
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
 
     private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
-    private final String productItemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
+    private final String productemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
     private final String productDetailPath = ".//div[contains(@class,'product-details')]";
     private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
     private final String productPricePath = ".//span[contains(@class,'price')]";
@@ -92,14 +92,14 @@ public class ProductCategoryPage extends BasePage {
 
     @Step("Wait until product list loading completes")
     public void waitForLoadingComplete() {
-        if (loader.isDisplayed()) {
+        if (loader.exists() && loader.isDisplayed()) {
             loader.shouldNotBe(Condition.visible);
         }
     }
 
     @Step("Select a random product")
     public void selectRandomProduct() {
-        ElementsCollection visibleItems = $$x(prodcutItemsPath);
+        ElementsCollection visibleItems = $$x(productemsPath);
         if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
 
         selectedProductElement = visibleItems.get(new Random().nextInt(visibleItems.size()));
@@ -109,8 +109,7 @@ public class ProductCategoryPage extends BasePage {
         String name = productDetails.$x(productTitlePath).getText().trim();
         String priceString = productDetails.$x(productPricePath).getText().trim();
 
-        double price = Double.parseDouble(priceString.replaceAll("[^0-9.]", ""));
-
+        double price = BasePage.parsePrice(priceString);
         selectedProduct = new Product(name, price, 1);
         selectedProduct.logInfo("[INFO] Selected Product");
     }
