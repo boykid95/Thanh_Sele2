@@ -2,8 +2,10 @@ package vn.agest.selenide.tests;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import lombok.extern.log4j.Log4j;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.asserts.SoftAssert;
@@ -14,8 +16,7 @@ import vn.agest.selenide.pageObjects.LoginPage;
 
 import java.util.Arrays;
 
-import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.closeWebDriver;
+import static com.codeborne.selenide.Selenide.*;
 
 @Log4j
 public class BaseTest {
@@ -33,10 +34,21 @@ public class BaseTest {
             Configuration.timeout = 5000;
 
             open(ConfigFileReader.getUrlFromPageType(PageType.HOME_PAGE));
+            homePage.closePopupIfPresent();
 
             testCaseName = this.getClass().getSimpleName();
         } catch (Exception e) {
             log.error("Error: " + Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void logoutAfterEachTest() {
+        try {
+            log.info("🔄 Attempting to logout after test...");
+            homePage.logout();
+        } catch (Exception e) {
+            log.info("⚡ Skip logout, probably already logged out.");
         }
     }
 

@@ -28,6 +28,8 @@ public abstract class BasePage {
     protected final PageType pageType;
 
     private final SelenideElement loginButton = $x("//span[contains(@class, 'flex-inline')]//span[contains(text(), 'Log in / Sign u')]");
+    private final SelenideElement accountLink = $x("//div[contains(@class,'et_b_header-account')]//a[contains(@href,'/my-account')]");
+    private final SelenideElement logoutLink = $x("//a[contains(text(),'Logout')]");
     private final SelenideElement allDepartmentsMenu = $x("//div[@class='secondary-menu-wrapper']//span[text()='All departments']");
     private final SelenideElement productMenu = $x("//ul[@id='menu-all-departments-1']");
     private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
@@ -49,7 +51,6 @@ public abstract class BasePage {
         log.info(String.format("🌐 Opening page [%s] with URL: %s", pageType.name(), url));
         Selenide.open(url);
         DriverUtils.waitToLoadPage();
-        closePopupIfPresent();
         verifyPageTitle(pageType);
     }
 
@@ -58,8 +59,12 @@ public abstract class BasePage {
         try {
             if (popupCloseButton.isDisplayed() || popupCloseButton.shouldBe(visible, Duration.ofSeconds(5)).isDisplayed()) {
                 elementHelper.clickToElement(popupCloseButton, "Close Popup");
+                log.info("Popup closed.");
+            } else {
+                log.info("Popup not visible, skip closing.");
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.info("No popup active, continue.");
         }
     }
 
@@ -170,6 +175,25 @@ public abstract class BasePage {
             return Double.parseDouble(cleaned);
         } catch (NumberFormatException e) {
             throw new RuntimeException("Failed to parse price: " + priceText + " (cleaned: " + priceText + ")", e);
+        }
+    }
+
+    @Step("Logout if user is logged in")
+    public void logout() {
+        try {
+            if (accountLink.exists() && accountLink.isDisplayed()) {
+                log.info("🔑 Account detected, attempting to logout...");
+                elementHelper.clickToElement(accountLink, "Account Link (My Account)");
+                elementHelper.waitForElementVisible(logoutLink, "Logout Link");
+                elementHelper.clickToElement(logoutLink, "Logout Link");
+
+                DriverUtils.waitToLoadPage();
+                log.info("✅ User has been logged out.");
+            } else {
+                log.info("ℹ️ No active session found, skip logout.");
+            }
+        } catch (Exception e) {
+            log.error("❌ Failed during logout: " + e.getMessage());
         }
     }
 }

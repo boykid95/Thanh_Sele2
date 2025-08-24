@@ -35,6 +35,8 @@ public class CheckoutPage extends BasePage {
     private final SelenideElement countryDropdownDisplay = $x("//span[contains(@id,'billing_country') and contains(@class,'select2-selection__rendered')]");
     private final SelenideElement phoneInput = $x("//input[@id='billing_phone']");
     private final SelenideElement emailInput = $x("//input[@id='billing_email']");
+    private final SelenideElement directBankTransferOption = $x("//input[@id='payment_method_bacs']");
+    private final SelenideElement cashOnDeliveryOption = $x("//input[@id='payment_method_cod']");
 
     private final SelenideElement loadingOverlay = $x("//div[@class='blockUI blockOverlay']");
 
@@ -119,5 +121,19 @@ public class CheckoutPage extends BasePage {
             log.info("Loading overlay did not appear immediately, continuing...");
         }
         loadingOverlay.shouldNotBe(Condition.visible, Duration.ofSeconds(30));
+    }
+
+    @Step("Select payment method: {method}")
+    public void selectPaymentMethod(String method) {
+        switch (method.toLowerCase()) {
+            case "bank":
+                elementHelper.clickToElement(directBankTransferOption, "Select Direct Bank Transfer");
+                break;
+            case "cod":
+                elementHelper.clickToElement(cashOnDeliveryOption, "Select Cash on Delivery");
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported payment method: " + method);
+        }
     }
 }

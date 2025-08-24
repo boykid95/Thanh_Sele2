@@ -33,9 +33,11 @@ public class ShopPage extends BasePage {
 
     @Step("Close any displayed advertisement in Shop page")
     private void closeAdIfPresent() {
-        if (adCloseButton.exists()) {
+        if (adCloseButton.exists() && adCloseButton.isDisplayed()) {
             elementHelper.clickToElement(adCloseButton, "Click Close Advertisement");
             log.info("Advertisement closed successfully.");
+        } else {
+            log.info("No advertisement displayed.");
         }
     }
 
