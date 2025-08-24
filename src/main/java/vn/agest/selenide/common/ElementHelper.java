@@ -7,6 +7,9 @@ import com.codeborne.selenide.WebDriverRunner;
 import lombok.extern.log4j.Log4j;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+
+import java.time.Duration;
 
 @Log4j
 public class ElementHelper {
@@ -38,6 +41,19 @@ public class ElementHelper {
             actions.moveToElement(element).perform();
         } catch (Exception e) {
             log.error("Failed to move to element '" + elementName + "'. " + e.getMessage());
+        }
+    }
+
+    public void selectDropdownByVisibleText(SelenideElement dropdown, String optionText) {
+        try {
+            dropdown.shouldBe(Condition.visible, Duration.ofSeconds(10));
+            highlightElement(dropdown);
+            Select select = new Select(dropdown);
+            select.selectByVisibleText(optionText);
+            log.info("✅ Selected option '" + optionText + "' from dropdown.");
+        } catch (Exception e) {
+            log.error("❌ Failed to select option '" + optionText + "' from dropdown.", e);
+            throw e;
         }
     }
 

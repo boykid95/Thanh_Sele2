@@ -4,9 +4,10 @@
     <test name="Test Chrome">
         <parameter name="browser" value="chrome" />
         <classes>
-<!--            <class name="vn.agest.selenide.testcase.TC_01_VerifyPurchaseTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_02_VerifyMultipleItemsPurchaseTest"/>-->
+            <class name="vn.agest.selenide.testcase.TC_01_VerifyPurchaseTest"/>
+            <class name="vn.agest.selenide.testcase.TC_02_VerifyMultipleItemsPurchaseTest"/>
             <class name="vn.agest.selenide.testcase.TC_03_VerifyPurchaseWithPaymentMethodsTest"/>
+            <class name="vn.agest.selenide.testcase.TC_04_VerifySortItemsByPriceTest"/>
         </classes>
     </test>
 </suite>
