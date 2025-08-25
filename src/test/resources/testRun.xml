@@ -9,6 +9,7 @@
             <class name="vn.agest.selenide.testcase.TC_03_VerifyPurchaseWithPaymentMethodsTest"/>
             <class name="vn.agest.selenide.testcase.TC_04_VerifySortItemsByPriceTest"/>
             <class name="vn.agest.selenide.testcase.TC_05_VerifyOrdersHistoryTest"/>
+            <class name="vn.agest.selenide.testcase.TC_06_GuestCheckoutTest"/>
         </classes>
     </test>
 </suite>

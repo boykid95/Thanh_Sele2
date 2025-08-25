@@ -39,6 +39,7 @@ public abstract class BasePage {
     private final SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
     private final SelenideElement myAccountLink = $x("//div[contains(@class,'header-account')]//a[contains(@href,'my-account')]");
     private final SelenideElement logOutLink = $x("//a[contains(text(),'Logout')]");
+    private final SelenideElement accountLabel = $x("//div[contains(@class,'header-account')]//span[contains(@class,'et-element-label')]");
     private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
     protected BasePage(ElementHelper elementHelper, PageType pageType) {
@@ -196,20 +197,23 @@ public abstract class BasePage {
 
     @Step("Logout if user is logged in")
     public void logOut() {
-        try {
-            if (myAccountLink.exists() && myAccountLink.isDisplayed()) {
-                log.info("🔑 Account detected, attempting to logout...");
-                elementHelper.clickToElement(myAccountLink, "Account Link (My Account)");
-                elementHelper.waitForElementVisible(logOutLink, "Logout Link");
-                elementHelper.clickToElement(logOutLink, "Logout Link");
+        String currentAccountText = accountLabel.getText().trim();
+        if (currentAccountText.equalsIgnoreCase("Log in / Sign up")) {
+            log.info("ℹ️ User is not logged in. Skipping logout.");
+            return;
+        }
 
-                DriverUtils.waitToLoadPage();
-                log.info("✅ User has been logged out.");
-            } else {
-                log.info("ℹ️ No active session found, skip logout.");
-            }
+        try {
+            log.info("🔑 Account detected (" + currentAccountText + "), attempting to logout...");
+            elementHelper.clickToElement(accountLabel, "Account Label (" + currentAccountText + ")");
+            elementHelper.waitForElementVisible(logOutLink, "Logout Link");
+            elementHelper.clickToElement(logOutLink, "Logout Link");
+
+            DriverUtils.waitToLoadPage();
+            log.info("✅ User has been logged out.");
         } catch (Exception e) {
             log.error("❌ Failed during logout: " + e.getMessage());
+            throw e;
         }
     }
 }

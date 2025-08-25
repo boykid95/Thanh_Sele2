@@ -16,6 +16,7 @@ import vn.agest.selenide.model.Product;
 import java.time.Duration;
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
 
 @Log4j
@@ -118,11 +119,11 @@ public class CheckoutPage extends BasePage {
     @Step("Wait for loading overlay to appear and disappear")
     public void waitForLoadingOverlay() {
         try {
-            loadingOverlay.shouldBe(Condition.visible, Duration.ofSeconds(5));
+            loadingOverlay.shouldBe(visible, Duration.ofSeconds(5));
         } catch (Exception e) {
             log.info("Loading overlay did not appear immediately, continuing...");
         }
-        loadingOverlay.shouldNotBe(Condition.visible, Duration.ofSeconds(30));
+        loadingOverlay.shouldNotBe(visible, Duration.ofSeconds(30));
     }
 
     @Step("Select payment method: {method}")
@@ -157,5 +158,33 @@ public class CheckoutPage extends BasePage {
                 billingFirstName, billingLastName,
                 billingStreet, billingCity, billingPostcode,
                 billingCountry, billingPhone, billingEmail);
+    }
+
+    @Step("Fill all guest billing details and place the order")
+    public OrderStatusPage placeGuestOrder(String firstName, String lastName, String address, String city, String postcode, String phone, String email) {
+        log.info("Filling in guest billing details...");
+
+        // Chờ cho ô First Name xuất hiện trước khi bắt đầu điền
+        firstNameInput.shouldBe(visible, Duration.ofSeconds(10));
+
+        // Điền toàn bộ thông tin
+        firstNameInput.setValue(firstName);
+        lastNameInput.setValue(lastName);
+        streetInput.setValue(address);
+        cityInput.setValue(city);
+        postcodeInput.setValue(postcode);
+        phoneInput.setValue(phone);
+        emailInput.setValue(email);
+
+        log.info("All details filled. Selecting payment method...");
+
+        // Chọn phương thức thanh toán (ví dụ: Cash on delivery)
+        // Dùng executeJavaScript để click an toàn hơn nếu element bị che
+        Selenide.executeJavaScript("arguments[0].click();", cashOnDeliveryOption);
+
+        log.info("Placing the order...");
+
+        // Gọi lại hàm placeOrder() cũ để nhấn nút và chờ trang mới
+        return placeOrder();
     }
 }

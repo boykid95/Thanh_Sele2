@@ -6,6 +6,7 @@ import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
+import vn.agest.selenide.model.Order;
 import vn.agest.selenide.model.Product;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class OrderStatusPage extends BasePage {
     // Single item locators
     private final SelenideElement orderItemName = $x("//td[contains(@class,'product-name')]/a");
     private final SelenideElement orderItemPrice = $x("//td[@class='woocommerce-table__product-total product-total']//bdi");
+    private final SelenideElement orderIdElement = $x("//li[contains(@class,'woocommerce-order-overview__order')]/strong");
 
     // Multiple items locators
     private final ElementsCollection orderItemNames = $$x("//td[contains(@class,'product-name')]/a");
@@ -104,5 +106,13 @@ public class OrderStatusPage extends BasePage {
             product.logInfo("✅ Ordered product found: ");
         }
         return products;
+    }
+
+    @Step("Extract all order information from the page")
+    public Order extractOrderInfo() {
+        String orderId = orderIdElement.getText().trim();
+        Order order = new Order();
+        order.setOrderId(orderId);
+        return order;
     }
 }
