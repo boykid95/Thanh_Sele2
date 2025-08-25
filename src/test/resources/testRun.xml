@@ -10,7 +10,8 @@
 <!--            <class name="vn.agest.selenide.testcase.TC_04_VerifySortItemsByPriceTest"/>-->
 <!--            <class name="vn.agest.selenide.testcase.TC_05_VerifyOrdersHistoryTest"/>-->
 <!--            <class name="vn.agest.selenide.testcase.TC_06_GuestCheckoutTest"/>-->
-            <class name="vn.agest.selenide.testcase.TC_07_VerifyMandatoryFieldsErrorTest"/>
+<!--            <class name="vn.agest.selenide.testcase.TC_07_VerifyMandatoryFieldsErrorTest"/>-->
+            <class name="vn.agest.selenide.testcase.TC_08_ClearCartTest"/>
         </classes>
     </test>
 </suite>
