@@ -174,11 +174,15 @@ public abstract class BasePage {
     @Step("Parse price string: '{priceText}' into double value")
     public static double parsePrice(String priceText) {
         try {
-            String cleaned = priceText.replaceAll("[$,]", "").trim();
+            String[] numbers = priceText.replaceAll("[^0-9.]", " ").trim().split("\\s+");
+            if (numbers.length == 0) {
+                throw new RuntimeException("No numeric value found in: " + priceText);
+            }
 
+            String cleaned = numbers[numbers.length - 1];
             return Double.parseDouble(cleaned);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Failed to parse price: " + priceText + " (cleaned: " + priceText + ")", e);
+            throw new RuntimeException("Failed to parse price: " + priceText, e);
         }
     }
 

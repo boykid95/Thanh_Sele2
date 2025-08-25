@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +18,4 @@ public class Order {
     private String billingCountry;
     private String billingPhone;
     private String billingEmail;
-
-    public String getBillingFullName() {
-        return billingFirstName + " " + billingLastName;
-    }
 }
