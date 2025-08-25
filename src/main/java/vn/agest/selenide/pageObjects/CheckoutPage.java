@@ -16,7 +16,9 @@ import vn.agest.selenide.model.Product;
 import java.time.Duration;
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 @Log4j
@@ -40,6 +42,7 @@ public class CheckoutPage extends BasePage {
     private final SelenideElement emailInput = $x("//input[@id='billing_email']");
     private final SelenideElement directBankTransferOption = $x("//input[@id='payment_method_bacs']");
     private final SelenideElement cashOnDeliveryOption = $x("//input[@id='payment_method_cod']");
+    private final SelenideElement errorList = $("ul.woocommerce-error");
 
     private final SelenideElement loadingOverlay = $x("//div[@class='blockUI blockOverlay']");
 
@@ -116,6 +119,11 @@ public class CheckoutPage extends BasePage {
         return new OrderStatusPage();
     }
 
+    @Step("Click on 'Place Order' button without filling form")
+    public void clickPlaceOrder() {
+        elementHelper.clickToElement(placeOrderButton, "Place Order Button");
+    }
+
     @Step("Wait for loading overlay to appear and disappear")
     public void waitForLoadingOverlay() {
         try {
@@ -164,10 +172,8 @@ public class CheckoutPage extends BasePage {
     public OrderStatusPage placeGuestOrder(String firstName, String lastName, String address, String city, String postcode, String phone, String email) {
         log.info("Filling in guest billing details...");
 
-        // Chờ cho ô First Name xuất hiện trước khi bắt đầu điền
         firstNameInput.shouldBe(visible, Duration.ofSeconds(10));
 
-        // Điền toàn bộ thông tin
         firstNameInput.setValue(firstName);
         lastNameInput.setValue(lastName);
         streetInput.setValue(address);
@@ -176,15 +182,17 @@ public class CheckoutPage extends BasePage {
         phoneInput.setValue(phone);
         emailInput.setValue(email);
 
-        log.info("All details filled. Selecting payment method...");
-
-        // Chọn phương thức thanh toán (ví dụ: Cash on delivery)
-        // Dùng executeJavaScript để click an toàn hơn nếu element bị che
         Selenide.executeJavaScript("arguments[0].click();", cashOnDeliveryOption);
-
-        log.info("Placing the order...");
-
-        // Gọi lại hàm placeOrder() cũ để nhấn nút và chờ trang mới
         return placeOrder();
+    }
+
+    @Step("Verify that error message '{message}' is displayed")
+    public boolean isErrorMessageDisplayed(String message) {
+        try {
+            return errorList.shouldBe(visible).has(text(message));
+        } catch (Exception e) {
+            log.error("❌ Could not find error message: '" + message + "'", e);
+            return false;
+        }
     }
 }
