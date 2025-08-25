@@ -10,7 +10,8 @@ public enum PageType {
     PRODUCT_PAGE("productPageUrl", "productPageTitle"),
     CHECKOUT_PAGE("checkoutPageUrl", "checkoutPageTitle"),
     ORDER_STATUS_PAGE("orderStatusPageUrl", "orderStatusPageTitle"),
-    SHOP_PAGE("shopPageUrl", "shopPageTitle");
+    SHOP_PAGE("shopPageUrl", "shopPageTitle"),
+    MY_ACCOUNT_PAGE("myAccountPageUrl", "myAccountPageTitle" ),;
 
     private final String urlKey;
     private final String titleKey;

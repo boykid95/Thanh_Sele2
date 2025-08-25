@@ -13,6 +13,7 @@ import vn.agest.selenide.common.ConfigFileReader;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.pageObjects.HomePage;
 import vn.agest.selenide.pageObjects.LoginPage;
+import vn.agest.selenide.pageObjects.MyAccountPage;
 
 import java.util.Arrays;
 
@@ -46,7 +47,7 @@ public class BaseTest {
     public void logoutAfterEachTest() {
         try {
             log.info("🔄 Attempting to logout after test...");
-            homePage.logout();
+            homePage.logOut();
         } catch (Exception e) {
             log.info("⚡ Skip logout, probably already logged out.");
         }

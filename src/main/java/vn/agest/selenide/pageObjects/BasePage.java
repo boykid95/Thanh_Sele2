@@ -13,6 +13,7 @@ import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.enums.ProductCategory;
+import vn.agest.selenide.model.Order;
 import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
 
@@ -28,8 +29,6 @@ public abstract class BasePage {
     protected final PageType pageType;
 
     private final SelenideElement loginButton = $x("//span[contains(@class, 'flex-inline')]//span[contains(text(), 'Log in / Sign u')]");
-    private final SelenideElement accountLink = $x("//div[contains(@class,'et_b_header-account')]//a[contains(@href,'/my-account')]");
-    private final SelenideElement logoutLink = $x("//a[contains(text(),'Logout')]");
     private final SelenideElement allDepartmentsMenu = $x("//div[@class='secondary-menu-wrapper']//span[text()='All departments']");
     private final SelenideElement productMenu = $x("//ul[@id='menu-all-departments-1']");
     private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
@@ -37,7 +36,9 @@ public abstract class BasePage {
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
     private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
     private final SelenideElement addToCartLoader = $x("//div[@class='et-loader']");
-
+    private final SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
+    private final SelenideElement myAccountLink = $x("//div[contains(@class,'header-account')]//a[contains(@href,'my-account')]");
+    private final SelenideElement logOutLink = $x("//a[contains(text(),'Logout')]");
     private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
 
     protected BasePage(ElementHelper elementHelper, PageType pageType) {
@@ -112,6 +113,18 @@ public abstract class BasePage {
         return new ProductCategoryPage(productCategory);
     }
 
+    @Step("Navigate to Shop page")
+    public ShopPage navigateToShopPage() {
+        elementHelper.clickToElement(shopLink, "Shop Link");
+        return new ShopPage();
+    }
+
+    @Step("Navigate to Login Page")
+    public MyAccountPage navigateToMyAccountPage() {
+        elementHelper.clickToElement(myAccountLink, "My Account Link");
+        return new MyAccountPage();
+    }
+
     @Step("Hover over Cart icon to open MiniCart")
     public MiniCartComponent moveToMiniCart() {
         clickBackToTop();
@@ -133,15 +146,6 @@ public abstract class BasePage {
             Selenide.executeJavaScript("arguments[0].style.display='none';", cookieNoticeDialog);
             cookieNoticeDialog.shouldNotBe(Condition.visible);
         }
-    }
-
-    @Step("Navigate to Shop page")
-    public ShopPage navigateToShopPage() {
-        SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
-
-        elementHelper.waitForElementClickable(shopLink, "Shop Link");
-        elementHelper.clickToElement(shopLink, "Shop Link");
-        return new ShopPage();
     }
 
     @Step("Merge product list by name and sum their quantities and prices")
@@ -178,14 +182,22 @@ public abstract class BasePage {
         }
     }
 
+    @Step("Place random order with {count} products")
+    public Order placeRandomOrder(int count) {
+        ShopPage shopPage = navigateToShopPage();
+        List<Product> products = shopPage.addRandomProductsToCart(count);
+        CheckoutPage checkoutPage = shopPage.goToCart().checkOut();
+        return checkoutPage.placeOrderAndExtractInfo(products);
+    }
+
     @Step("Logout if user is logged in")
-    public void logout() {
+    public void logOut() {
         try {
-            if (accountLink.exists() && accountLink.isDisplayed()) {
+            if (myAccountLink.exists() && myAccountLink.isDisplayed()) {
                 log.info("🔑 Account detected, attempting to logout...");
-                elementHelper.clickToElement(accountLink, "Account Link (My Account)");
-                elementHelper.waitForElementVisible(logoutLink, "Logout Link");
-                elementHelper.clickToElement(logoutLink, "Logout Link");
+                elementHelper.clickToElement(myAccountLink, "Account Link (My Account)");
+                elementHelper.waitForElementVisible(logOutLink, "Logout Link");
+                elementHelper.clickToElement(logOutLink, "Logout Link");
 
                 DriverUtils.waitToLoadPage();
                 log.info("✅ User has been logged out.");

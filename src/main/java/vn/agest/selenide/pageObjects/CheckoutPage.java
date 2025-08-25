@@ -10,9 +10,11 @@ import lombok.extern.log4j.Log4j;
 import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.common.ElementHelper;
+import vn.agest.selenide.model.Order;
 import vn.agest.selenide.model.Product;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.Selenide.$x;
 
@@ -135,5 +137,25 @@ public class CheckoutPage extends BasePage {
             default:
                 throw new IllegalArgumentException("Unsupported payment method: " + method);
         }
+    }
+
+    @Step("Place order and extract order info")
+    public Order placeOrderAndExtractInfo(List<Product> products) {
+        captureBillingInfo();
+
+        elementHelper.clickToElement(placeOrderButton, "Place Order Button");
+        waitForLoadingOverlay();
+        Selenide.Wait().until(webDriver -> WebDriverRunner.url().contains("/checkout/order-received/"));
+        DriverUtils.waitToLoadPage();
+
+        String orderId = $x("//li[contains(@class,'order')]//strong").getText().trim();
+        double totalAmount = BasePage.parsePrice(
+                $x("//li[contains(@class,'total')]//strong").getText().trim()
+        );
+
+        return new Order(orderId, totalAmount,
+                billingFirstName, billingLastName,
+                billingStreet, billingCity, billingPostcode,
+                billingCountry, billingPhone, billingEmail);
     }
 }

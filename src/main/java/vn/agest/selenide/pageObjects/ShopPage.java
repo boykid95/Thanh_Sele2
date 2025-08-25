@@ -33,7 +33,7 @@ public class ShopPage extends BasePage {
 
 
     public ShopPage() {
-        super(new ElementHelper(),PageType.SHOP_PAGE);
+        super(new ElementHelper(), PageType.SHOP_PAGE);
         closeAdIfPresent();
     }
 
@@ -130,5 +130,12 @@ public class ShopPage extends BasePage {
         return productPriceElements.stream()
                 .map(e -> BasePage.parsePrice(e.getText()))
                 .collect(Collectors.toList());
+    }
+
+    @Step("Add {count} random products to cart and return them")
+    public List<Product> addRandomProductsToCart(int count) {
+        List<Product> randomProducts = getRandomProducts(count);
+        addProductsToCart(randomProducts);
+        return randomProducts;
     }
 }
