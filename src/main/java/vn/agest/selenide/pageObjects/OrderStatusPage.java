@@ -22,12 +22,10 @@ public class OrderStatusPage extends BasePage {
     private final SelenideElement billingAddress = $x("//address");
     private final SelenideElement confirmationMessage = $x("//p[contains(@class,'woocommerce-notice')]");
 
-    // Single item locators
     private final SelenideElement orderItemName = $x("//td[contains(@class,'product-name')]/a");
     private final SelenideElement orderItemPrice = $x("//td[@class='woocommerce-table__product-total product-total']//bdi");
     private final SelenideElement orderIdElement = $x("//li[contains(@class,'woocommerce-order-overview__order')]/strong");
 
-    // Multiple items locators
     private final ElementsCollection orderItemNames = $$x("//td[contains(@class,'product-name')]/a");
     private final ElementsCollection orderItemPrices = $$x("//td[@class='woocommerce-table__product-total product-total']//bdi");
     private final ElementsCollection orderItemQuantities = $$x("//td[contains(@class,'product-name')]//strong");

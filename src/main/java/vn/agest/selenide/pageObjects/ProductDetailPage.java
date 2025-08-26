@@ -14,15 +14,14 @@ import static com.codeborne.selenide.Selenide.$$;
 @Log4j
 public class ProductDetailPage extends BasePage {
 
-    private final SelenideElement reviewsTab = $("#tab_reviews");
-    private final SelenideElement reviewForm = $("#review_form");
+    private final String reviewsTabLocator = "#tab_reviews";
+    private final String reviewFormLocator = "#review_form";
     private final String starRatingLocator = "a.star-%d";
-    private final SelenideElement commentInput = $("p.comment-form-comment #comment");
-    private final SelenideElement submitButton = $("#submit");
-
-    private final ElementsCollection allComments = $$("ol.commentlist li");
-    private final SelenideElement latestComment = allComments.last();
-    private final SelenideElement latestCommentStars = latestComment.$("div.star-rating span");
+    private final String commentInputLocator = "p.comment-form-comment #comment";
+    private final String submitButtonLocator = "#submit";
+    private final String allCommentsLocator = "ol.commentlist li";
+    private final String latestCommentStarsLocator = "div.star-rating span";
+    private final String latestCommentTextLocator = "div.description p";
 
     public ProductDetailPage() {
         super(new ElementHelper(), null);
@@ -30,37 +29,39 @@ public class ProductDetailPage extends BasePage {
 
     @Step("Go to the Reviews tab")
     public void goToReviewsTab() {
+        SelenideElement reviewsTab = $(reviewsTabLocator);
+        reviewsTab.scrollIntoView(true);
         elementHelper.clickToElement(reviewsTab, "Reviews Tab");
-        reviewForm.shouldBe(visible);
+        $(reviewFormLocator).shouldBe(visible);
     }
 
     @Step("Submit a review with {stars} stars and comment: '{comment}'")
     public void submitReview(int stars, String comment) {
+        ElementsCollection allComments = $$(allCommentsLocator);
         int initialCommentCount = allComments.size();
 
         SelenideElement starToClick = $(String.format(starRatingLocator, stars));
         elementHelper.clickToElement(starToClick, stars + "-star rating");
-        commentInput.setValue(comment);
-        elementHelper.clickToElement(submitButton, "Submit Review Button");
+        $(commentInputLocator).setValue(comment);
+        elementHelper.clickToElement($(submitButtonLocator), "Submit Review Button");
 
         allComments.shouldHave(sizeGreaterThan(initialCommentCount));
     }
 
     @Step("Get the text of the latest comment")
     public String getLatestCommentText() {
-        latestComment.shouldBe(visible);
-        return latestComment.$("div.description p").getText();
+        SelenideElement latestComment = $$(allCommentsLocator).last().shouldBe(visible);
+        return latestComment.$(latestCommentTextLocator).getText();
     }
 
     @Step("Get the star rating of the latest comment")
     public int getLatestCommentRating() {
-        latestComment.shouldBe(visible);
+        SelenideElement latestComment = $$(allCommentsLocator).last().shouldBe(visible);
+        SelenideElement latestCommentStars = latestComment.$(latestCommentStarsLocator);
         String styleAttribute = latestCommentStars.getAttribute("style");
         String widthValue = styleAttribute.replaceAll("[^0-9]", "");
         int widthPercentage = Integer.parseInt(widthValue);
-        int starRating = widthPercentage / 20;
-        log.info("Extracted star rating. Style='".concat(styleAttribute)
-                .concat("', Calculated stars=").concat(String.valueOf(starRating)));
-        return starRating;
+
+        return widthPercentage / 20;
     }
 }

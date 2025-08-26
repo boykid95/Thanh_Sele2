@@ -27,7 +27,6 @@ public class CheckoutPage extends BasePage {
 
     private final SelenideElement billingDetailsSection = $x("//div[@class='woocommerce-billing-fields']");
     private final SelenideElement placeOrderButton = $x("//button[@id='place_order']");
-    private final SelenideElement orderItemName = $x("//td[contains(@class,'product-name')]/text()[1]");
     private final SelenideElement orderItemPrice = $x("//td[@class='product-total']/span[@class='woocommerce-Price-amount amount']");
 
     private final SelenideElement firstNameInput = $x("//input[@id='billing_first_name']");
@@ -94,10 +93,8 @@ public class CheckoutPage extends BasePage {
     private final SelenideElement orderItemNameCell = $x("//td[contains(@class,'product-name')]");
 
     @Step("Verify item details on Checkout page match selected product")
-    public boolean verifyOrderItemDetails(Product expectedProduct) { // <-- Thay đổi tham số
+    public boolean verifyOrderItemDetails(Product expectedProduct) {
         elementHelper.waitForElementVisible(orderItemNameCell, "Order Item Cell");
-
-        // Dùng JavaScript để lấy text con đầu tiên của thẻ <td>
         String actualName = executeJavaScript(
                 "return arguments[0].childNodes[0].textContent.trim()",
                 orderItemNameCell
@@ -130,6 +127,7 @@ public class CheckoutPage extends BasePage {
     public void clickPlaceOrder() {
         elementHelper.clickToElement(placeOrderButton, "Place Order Button");
         waitForLoadingOverlay();
+        DriverUtils.waitToLoadPage();
     }
 
     @Step("Wait for loading overlay to appear and disappear")
@@ -139,7 +137,7 @@ public class CheckoutPage extends BasePage {
         } catch (Exception e) {
             log.info("Loading overlay did not appear immediately, continuing...");
         }
-        loadingOverlay.shouldNotBe(visible, Duration.ofSeconds(30));
+        loadingOverlay.shouldNotBe(visible, Duration.ofSeconds(15));
     }
 
     @Step("Select payment method: {method}")

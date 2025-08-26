@@ -32,7 +32,6 @@ public abstract class BasePage {
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
     private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
     private final SelenideElement addToCartLoader = $x("//div[@class='et-loader']");
-//    private final SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
 
     private final String shopLinkLocator = "//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]";
     private final SelenideElement myAccountLink = $x("//div[contains(@class,'header-account')]//a[contains(@href,'my-account')]");

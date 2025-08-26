@@ -14,6 +14,7 @@ import vn.agest.selenide.model.Product;
 
 import java.util.Random;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 @Log4j
@@ -34,13 +35,6 @@ public class ProductCategoryPage extends BasePage {
     private final String priceContainerSelector = ".price";
     private final String discountedPriceSelector = "ins .amount";
     private final String normalPriceSelector = ".amount";
-
-//    private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
-//    private final String productemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
-//    private final String productDetailPath = ".//div[contains(@class,'product-details')]";
-//    private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
-//    private final String productPricePath = ".//span[contains(@class,'price')]";
-
 
     public ProductCategoryPage(ProductCategory category) {
         super(new ElementHelper(), null);
@@ -101,12 +95,13 @@ public class ProductCategoryPage extends BasePage {
     @Step("Wait until product list loading completes")
     public void waitForLoadingComplete() {
         if (loader.exists() && loader.isDisplayed()) {
-            loader.shouldNotBe(Condition.visible);
+            loader.shouldNotBe(visible);
         }
     }
 
     @Step("Select a random product and return it")
     public Product selectRandomProduct() {
+        productItems.first().shouldBe(visible);
         if (productItems.isEmpty()) {
             throw new AssertionError("No products found to select.");
         }
@@ -120,7 +115,7 @@ public class ProductCategoryPage extends BasePage {
 
         selectedProduct = new Product(name, price, 1);
         selectedProduct.logInfo("[INFO] Selected Product");
-        return selectedProduct; // Trả về sản phẩm đã chọn
+        return selectedProduct;
     }
 
     @Step("Extracting price from product details")
