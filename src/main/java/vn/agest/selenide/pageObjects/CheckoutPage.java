@@ -28,7 +28,7 @@ public class CheckoutPage extends BasePage {
 
     private final SelenideElement billingDetailsSection = $x("//div[@class='woocommerce-billing-fields']");
     private final SelenideElement placeOrderButton = $x("//button[@id='place_order']");
-    private final SelenideElement orderItemName = $x("//td[@class='product-name']");
+    private final SelenideElement orderItemName = $x("//td[contains(@class,'product-name')]/text()[1]");
     private final SelenideElement orderItemPrice = $x("//td[@class='product-total']/span[@class='woocommerce-Price-amount amount']");
 
     private final SelenideElement firstNameInput = $x("//input[@id='billing_first_name']");

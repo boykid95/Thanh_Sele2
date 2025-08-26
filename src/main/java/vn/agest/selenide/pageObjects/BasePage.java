@@ -18,10 +18,7 @@ import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j
 public abstract class BasePage {
@@ -29,7 +26,6 @@ public abstract class BasePage {
     protected final PageType pageType;
 
     private final SelenideElement loginButton = $x("//span[contains(@class, 'flex-inline')]//span[contains(text(), 'Log in / Sign u')]");
-    private final SelenideElement allDepartmentsMenu = $x("//div[@class='secondary-menu-wrapper']//span[text()='All departments']");
     private final SelenideElement productMenu = $x("//ul[@id='menu-all-departments-1']");
     private final SelenideElement viewCartButton = $x("//div[@class='header-wrapper']//div[contains(@class,'header-cart')]/a[contains(@href,'/cart')]");
     private final SelenideElement backToTopButton = $x("//div[contains(@class, 'back-top')]");
@@ -41,6 +37,7 @@ public abstract class BasePage {
     private final SelenideElement logOutLink = $x("//a[contains(text(),'Logout')]");
     private final SelenideElement accountLabel = $x("//div[contains(@class,'header-account')]//span[contains(@class,'et-element-label')]");
     private static final String categoryLinkPath = "//div[@class='secondary-menu-wrapper']//a[text()='%s']";
+    private final String allDepartmentsMenuLocator = "//div[@class='secondary-menu-wrapper']//span[text()='All departments']";
 
     protected BasePage(ElementHelper elementHelper, PageType pageType) {
         this.elementHelper = elementHelper;
@@ -97,6 +94,7 @@ public abstract class BasePage {
 
     @Step("Navigate to All Departments menu")
     public void navigateToAllDepartments() {
+        SelenideElement allDepartmentsMenu = $x(allDepartmentsMenuLocator);
         elementHelper.waitForElementVisible(allDepartmentsMenu, "All Departments Menu");
         elementHelper.highlightElement(allDepartmentsMenu);
         allDepartmentsMenu.hover();
@@ -216,5 +214,9 @@ public abstract class BasePage {
             log.error("❌ Failed during logout: " + e.getMessage());
             throw e;
         }
+    }
+
+    public static int getRandomNumber(int min, int max) {
+        return new Random().nextInt((max - min) + 1) + min;
     }
 }

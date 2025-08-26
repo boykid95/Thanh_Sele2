@@ -115,7 +115,7 @@ public class ShopPage extends BasePage {
         }
     }
 
-    private final SelenideElement sortDropdown  = $x("//select[@name='orderby']");
+    private final SelenideElement sortDropdown = $x("//select[@name='orderby']");
     private final ElementsCollection productPriceElements =
             $$x("//ul[contains(@class,'products')]/li//span[contains(@class,'price')]/span[contains(@class,'amount')]");
 
@@ -137,5 +137,16 @@ public class ShopPage extends BasePage {
         List<Product> randomProducts = getRandomProducts(count);
         addProductsToCart(randomProducts);
         return randomProducts;
+    }
+
+    @Step("Click on a random product to view its details")
+    public ProductDetailPage clickRandomProduct() {
+        if (!productItems.isEmpty()) {
+            int randomIndex = new Random().nextInt(productItems.size());
+            productItems.get(randomIndex).scrollIntoView(true).click();
+        } else {
+            throw new AssertionError("No products found to click on.");
+        }
+        return new ProductDetailPage();
     }
 }
