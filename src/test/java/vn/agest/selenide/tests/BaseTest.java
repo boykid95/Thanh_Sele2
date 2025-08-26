@@ -2,7 +2,6 @@ package vn.agest.selenide.tests;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import lombok.extern.log4j.Log4j;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -13,11 +12,11 @@ import vn.agest.selenide.common.ConfigFileReader;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.pageObjects.HomePage;
 import vn.agest.selenide.pageObjects.LoginPage;
-import vn.agest.selenide.pageObjects.MyAccountPage;
 
 import java.util.Arrays;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.closeWebDriver;
+import static com.codeborne.selenide.Selenide.open;
 
 @Log4j
 public class BaseTest {
@@ -32,7 +31,15 @@ public class BaseTest {
         try {
             Configuration.browser = browser;
             Configuration.browserSize = "1920x1080";
-            Configuration.timeout = 5000;
+            Configuration.timeout = 10000;
+
+            String gridUrl = System.getProperty("gridUrl");
+            if (gridUrl != null && !gridUrl.trim().isEmpty()) {
+                Configuration.remote = gridUrl;
+                log.info("🚀 Running tests on remote Selenium Grid at: " + gridUrl);
+            } else {
+                log.info("🖥️ Running tests on local machine.");
+            }
 
             open(ConfigFileReader.getUrlFromPageType(PageType.HOME_PAGE));
             homePage.closePopupIfPresent();

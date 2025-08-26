@@ -31,7 +31,7 @@ public class ProductDetailPage extends BasePage {
     public void goToReviewsTab() {
         SelenideElement reviewsTab = $(reviewsTabLocator);
         reviewsTab.scrollIntoView(true);
-        elementHelper.clickToElement(reviewsTab, "Reviews Tab");
+        elementHelper.jsClickToElement(reviewsTab, "Reviews Tab");
         $(reviewFormLocator).shouldBe(visible);
     }
 

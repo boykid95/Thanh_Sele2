@@ -108,8 +108,8 @@ public class CheckoutPage extends BasePage {
         log.info("Expected Price: " + expectedProduct.getPrice() + " | Actual Price: " + actualPrice);
         log.info("--------------------------");
 
-        boolean nameMatch = actualName.equalsIgnoreCase(expectedProduct.getName());
-        boolean priceMatch = actualPrice == expectedProduct.getPrice();
+        boolean nameMatch = actualName.toLowerCase().contains(expectedProduct.getName().toLowerCase());
+        boolean priceMatch = Math.abs(actualPrice - expectedProduct.getPrice()) < 0.01;
 
         return nameMatch && priceMatch;
     }

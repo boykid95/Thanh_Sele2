@@ -7,20 +7,31 @@ This project is an **Automation Test Framework** built with **Selenide** and **T
 ## 📁 Project Structure
 
 ```
-src/
-├── main/
-│   └── java/
-│       ├── common.helpers/
-│       │   └── ElementHelper.java
-│       └── pages/
-│           ├── HomePage.java
-│           └── ShopPage.java
-├── test/
-│   └── java/
-│       ├── base/
-│       │   └── BaseTest.java
-│       └── testcase/
-│           └── TC_01_VerifyShopPage.java
+src
+├── main
+│ └── java
+│ ├── common
+│ │ └── helpers
+│ │ └── ElementHelper.java
+│ ├── pageObjects
+│ │ ├── HomePage.java
+│ │ ├── ProductCategoryPage.java
+│ │ ├── CheckoutPage.java
+│ │ └── OrderStatusPage.java
+│ └── common
+│ └── constants
+│ └── AppConstants.java
+└── test
+└── java
+├── base
+│ └── BaseTest.java
+├── tests
+│ ├── TC_01_VerifyPurchaseTest.java
+│ ├── TC_02_VerifyMultipleItemsPurchaseTest.java
+│ ├── TC_03_VerifyLoginTest.java
+│ └── TC_10_PostReviewTest.java
+└── utils
+└── TestDataReader.java
 ```
 
 ---
@@ -50,7 +61,7 @@ src/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/selenide-test-project.git
+git clone https://github.com/boykid95/Thanh_Sele2
 cd selenide-test-project
 ```
 

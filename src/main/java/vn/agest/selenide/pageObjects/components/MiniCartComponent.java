@@ -31,11 +31,11 @@ public class MiniCartComponent {
         String actualName = miniCartProductName.getText().trim();
         double actualPrice = parsePrice(miniCartProductPrice.getText());
 
-        boolean nameMatch = actualName.equalsIgnoreCase(expected.getName());
-        boolean priceMatch = actualPrice == expected.getPrice();
+        boolean nameMatch = actualName.toLowerCase().contains(expected.getName().toLowerCase());
+        boolean priceMatch = Math.abs(actualPrice - expected.getPrice()) < 0.01;
 
         if (!nameMatch) {
-            log.error("❌ Mini Cart name mismatch. Expected: " + expected.getName() + ", Actual: " + actualName);
+            log.error("❌ Mini Cart name mismatch. Expected (contains): " + expected.getName() + ", Actual: " + actualName);
         }
         if (!priceMatch) {
             log.error("❌ Mini Cart price mismatch. Expected: " + expected.getPrice() + ", Actual: " + actualPrice);

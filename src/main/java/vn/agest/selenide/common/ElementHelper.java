@@ -30,7 +30,12 @@ public class ElementHelper {
             highlightElement(element);
             element.click();
         } catch (Exception e) {
-            log.info("Failed to click element '" + elementName + "'. " + e.getMessage());
+            try {
+                jsClickToElement(element, elementName);
+            } catch (Exception jsException) {
+                log.error("JavaScript click also failed for element '" + elementName + "'.", jsException);
+                throw jsException;
+            }
         }
     }
 
@@ -63,5 +68,15 @@ public class ElementHelper {
         js.executeScript("arguments[0].style.border='3px solid red'", element);
         Selenide.sleep(500);
         js.executeScript("arguments[0].style.border=''", element);
+    }
+
+    public void jsClickToElement(SelenideElement element, String elementName) {
+        try {
+            log.info("Attempting to click element '" + elementName + "' using JavaScript.");
+            JavascriptExecutor executor = (JavascriptExecutor) WebDriverRunner.getWebDriver();
+            executor.executeScript("arguments[0].click();", element);
+        } catch (Exception e) {
+            throw new RuntimeException("JavaScript click failed for element: " + elementName, e);
+        }
     }
 }
