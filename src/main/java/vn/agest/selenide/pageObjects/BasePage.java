@@ -32,7 +32,9 @@ public abstract class BasePage {
     private final SelenideElement cookieNoticeDialog = $x("//div[@id='cookie-notice']");
     private final SelenideElement popupCloseButton = $("button.pum-close:nth-child(3)");
     private final SelenideElement addToCartLoader = $x("//div[@class='et-loader']");
-    private final SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
+//    private final SelenideElement shopLink = $x("//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]");
+
+    private final String shopLinkLocator = "//div[@class='header-wrapper']//a[@class='item-link' and contains(@href,'/shop')]";
     private final SelenideElement myAccountLink = $x("//div[contains(@class,'header-account')]//a[contains(@href,'my-account')]");
     private final SelenideElement logOutLink = $x("//a[contains(text(),'Logout')]");
     private final SelenideElement accountLabel = $x("//div[contains(@class,'header-account')]//span[contains(@class,'et-element-label')]");
@@ -114,12 +116,14 @@ public abstract class BasePage {
 
     @Step("Navigate to Shop page")
     public ShopPage navigateToShopPage() {
+        SelenideElement shopLink = $x(shopLinkLocator);
         elementHelper.clickToElement(shopLink, "Shop Link");
         return new ShopPage();
     }
 
     @Step("Navigate to Login Page")
     public MyAccountPage navigateToMyAccountPage() {
+
         elementHelper.clickToElement(myAccountLink, "My Account Link");
         return new MyAccountPage();
     }

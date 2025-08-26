@@ -26,7 +26,7 @@ public class ShopPage extends BasePage {
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
 
     private final ElementsCollection productItems = $$x("//div[contains(@class,'content-product')]");
-    private static final String titleSelector = ".product-details .product-title";
+    private static final String titleSelector = ".product-details .product-title a";
     private static final String addToCartSelector = ".product-details .add_to_cart_button";
     private static final String discountedPriceSelector = ".products .price ins .amount";
     private static final String normalPriceSelector = ".products .price .amount";

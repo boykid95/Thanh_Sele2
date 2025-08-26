@@ -18,8 +18,7 @@ import java.util.List;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
 
 @Log4j
 public class CheckoutPage extends BasePage {
@@ -92,21 +91,29 @@ public class CheckoutPage extends BasePage {
         return billingFirstName + " " + billingLastName;
     }
 
+    private final SelenideElement orderItemNameCell = $x("//td[contains(@class,'product-name')]");
+
     @Step("Verify item details on Checkout page match selected product")
-    public boolean verifyOrderItemDetails(ProductCategoryPage productCategoryPage) {
-        elementHelper.waitForElementVisible(orderItemName, "Order Item Name");
-        elementHelper.waitForElementVisible(orderItemPrice, "Order Item Price");
+    public boolean verifyOrderItemDetails(Product expectedProduct) { // <-- Thay đổi tham số
+        elementHelper.waitForElementVisible(orderItemNameCell, "Order Item Cell");
 
-        String actualName = orderItemName.getText().trim();
-        String actualPriceString = orderItemPrice.getText().trim();
-        double actualPrice = Double.parseDouble(actualPriceString.replaceAll("[^0-9.]", ""));
+        // Dùng JavaScript để lấy text con đầu tiên của thẻ <td>
+        String actualName = executeJavaScript(
+                "return arguments[0].childNodes[0].textContent.trim()",
+                orderItemNameCell
+        );
 
-        Product expectedProduct = productCategoryPage.getSelectedProduct();
+        double actualPrice = parsePrice(orderItemPrice.getText());
+
+        // Log chi tiết để dễ debug
+        log.info("--- DEBUGGING MISMATCH ---");
+        log.info("Expected Name: " + expectedProduct.getName() + " | Actual Name: " + actualName);
+        log.info("Expected Price: " + expectedProduct.getPrice() + " | Actual Price: " + actualPrice);
+        log.info("--------------------------");
 
         boolean nameMatch = actualName.equalsIgnoreCase(expectedProduct.getName());
         boolean priceMatch = actualPrice == expectedProduct.getPrice();
 
-        log.info("Checkout Verify - Name Match: " + nameMatch + ", Price Match: " + priceMatch);
         return nameMatch && priceMatch;
     }
 
@@ -122,6 +129,7 @@ public class CheckoutPage extends BasePage {
     @Step("Click on 'Place Order' button without filling form")
     public void clickPlaceOrder() {
         elementHelper.clickToElement(placeOrderButton, "Place Order Button");
+        waitForLoadingOverlay();
     }
 
     @Step("Wait for loading overlay to appear and disappear")
@@ -182,7 +190,7 @@ public class CheckoutPage extends BasePage {
         phoneInput.setValue(phone);
         emailInput.setValue(email);
 
-        Selenide.executeJavaScript("arguments[0].click();", cashOnDeliveryOption);
+        executeJavaScript("arguments[0].click();", cashOnDeliveryOption);
         return placeOrder();
     }
 

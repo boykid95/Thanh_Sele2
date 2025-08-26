@@ -20,19 +20,27 @@ import static com.codeborne.selenide.Selenide.*;
 public class ProductCategoryPage extends BasePage {
 
     private final ProductCategory category;
-
     private SelenideElement selectedProductElement;
+    private Product selectedProduct;
+
     private final SelenideElement gridViewButton = $x("//div[contains(@class,'switch-grid')]");
     private final SelenideElement listViewButton = $x("//div[contains(@class,'switch-list')]");
     private final SelenideElement loader = $x("//div[contains(@class,'et-loader') and contains(@class,'product-ajax')]");
+    private final ElementsCollection productItems = $$x("//div[contains(@class,'ajax-content')]//div[contains(@class,'content-product')]");
 
-    private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
-    private final String productemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
     private final String productDetailPath = ".//div[contains(@class,'product-details')]";
-    private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
-    private final String productPricePath = ".//span[contains(@class,'price')]";
+    private final String productTitlePath = ".//h2[contains(@class,'product-title')]/a";
+    private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
+    private final String priceContainerSelector = ".price";
+    private final String discountedPriceSelector = "ins .amount";
+    private final String normalPriceSelector = ".amount";
 
-    private Product selectedProduct;
+//    private final String addToCartPath = ".//div[contains(@class,'product-details')]//a[contains(@class,'add_to_cart_button')]";
+//    private final String productemsPath = "//div[contains(@class,'ajax-content clearfix')]/div";
+//    private final String productDetailPath = ".//div[contains(@class,'product-details')]";
+//    private final String productTitlePath = ".//h2[contains(@class,'product-title')]";
+//    private final String productPricePath = ".//span[contains(@class,'price')]";
+
 
     public ProductCategoryPage(ProductCategory category) {
         super(new ElementHelper(), null);
@@ -97,21 +105,31 @@ public class ProductCategoryPage extends BasePage {
         }
     }
 
-    @Step("Select a random product")
-    public void selectRandomProduct() {
-        ElementsCollection visibleItems = $$x(productemsPath);
-        if (visibleItems.isEmpty()) throw new AssertionError("No products found to select.");
-
-        selectedProductElement = visibleItems.get(new Random().nextInt(visibleItems.size()));
+    @Step("Select a random product and return it")
+    public Product selectRandomProduct() {
+        if (productItems.isEmpty()) {
+            throw new AssertionError("No products found to select.");
+        }
+        selectedProductElement = productItems.get(new Random().nextInt(productItems.size()));
         selectedProductElement.scrollIntoView(true);
 
         SelenideElement productDetails = selectedProductElement.$x(productDetailPath);
         String name = productDetails.$x(productTitlePath).getText().trim();
-        String priceString = productDetails.$x(productPricePath).getText().trim();
-
+        String priceString = extractPrice(productDetails);
         double price = BasePage.parsePrice(priceString);
+
         selectedProduct = new Product(name, price, 1);
         selectedProduct.logInfo("[INFO] Selected Product");
+        return selectedProduct; // Trả về sản phẩm đã chọn
+    }
+
+    @Step("Extracting price from product details")
+    private String extractPrice(SelenideElement productDetails) {
+        SelenideElement priceContainer = productDetails.$(priceContainerSelector);
+        if (priceContainer.$(discountedPriceSelector).exists()) {
+            return priceContainer.$(discountedPriceSelector).getText();
+        }
+        return priceContainer.$(normalPriceSelector).getText();
     }
 
     @Step("Click 'Add to Cart' button for selected product")
@@ -119,12 +137,8 @@ public class ProductCategoryPage extends BasePage {
         if (selectedProductElement == null) {
             throw new IllegalStateException("No product selected to add to cart.");
         }
-
+        selectedProductElement.hover();
         SelenideElement addToCartButton = selectedProductElement.$x(addToCartPath);
-        selectedProductElement.scrollIntoView(true);
-
-        elementHelper.moveToElement(addToCartButton, "Add to Cart Button");
-        elementHelper.waitForElementVisible(addToCartButton, "Add to Cart Button");
         elementHelper.clickToElement(addToCartButton, "Add to Cart Button");
         waitForAddToCartLoaderToDisappear();
     }

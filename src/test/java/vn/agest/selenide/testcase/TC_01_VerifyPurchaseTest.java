@@ -4,6 +4,7 @@ import io.qameta.allure.Description;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import vn.agest.selenide.enums.ProductCategory;
+import vn.agest.selenide.model.Product;
 import vn.agest.selenide.pageObjects.*;
 import vn.agest.selenide.pageObjects.components.MiniCartComponent;
 import vn.agest.selenide.tests.BaseTest;
@@ -32,7 +33,7 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
                 "Items are not displayed in list layout"
         );
 
-        productCategoryPage.selectRandomProduct();
+        Product selectedProduct = productCategoryPage.selectRandomProduct();
         productCategoryPage.clickAddToCartButton();
 
         MiniCartComponent miniCart = productCategoryPage.moveToMiniCart();
@@ -48,7 +49,7 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
         );
 
         softAssert.assertTrue(
-                checkoutPage.verifyOrderItemDetails(productCategoryPage),
+                checkoutPage.verifyOrderItemDetails(selectedProduct),
                 "Order item details mismatch on checkout page"
         );
 
@@ -66,7 +67,7 @@ public class TC_01_VerifyPurchaseTest extends BaseTest {
         );
 
         softAssert.assertTrue(
-                orderStatusPage.verifyOrderItemDetails(productCategoryPage.getSelectedProduct()),
+                orderStatusPage.verifyOrderItemDetails(selectedProduct),
                 "Order item details mismatch"
         );
 
