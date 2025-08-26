@@ -46,13 +46,12 @@ src
 
 ---
 
-## ✅ Features
+# ✨ The features are applied
 
-- Page Object Model
-- Clean folder structure
-- Element helper class
-- TestNG suite execution via `testRun.xml`
-- Maven lifecycle support
+- 🔀 **Github**: Gitflow  
+- ⚙️ **Configuration**: pom.xml (Dependencies, Commandline)  
+- 💻 **Code**: Name convention, OOP, JSON, Data driven  
+- 📊 **Report**: Allure report  
 
 ---
 
@@ -89,8 +88,25 @@ Make sure the following are installed and configured:
   👉 [Download Maven](https://maven.apache.org/download.cgi)
 - **IDE:** IntelliJ IDEA, Eclipse, or VS Code
 
+# 📊 How to get the results  
+
+### ▶️ Run tests  
+- Run tests by **command line** or using **UI**  
+
+### 📂 After running the program  
+- Point to the current project  
+- Enter the following in Terminal:  
+  ```bash
+  allure serve allure-results
+
+# 🏆 FINAL RESULT
+<img width="1920" height="922" alt="image" src="https://github.com/user-attachments/assets/5042c276-3676-4d5b-bcf2-2f97c356d9c2" />
+<img width="1920" height="922" alt="image" src="https://github.com/user-attachments/assets/6cc92342-c462-4356-9c35-49ac964a7a36" />
+
+
 ---
 
 ## 👨‍💻 Author
+
 
 Thanh Dang – Automation Engineer
