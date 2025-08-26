@@ -22,18 +22,21 @@ public class TC_09_VerifyUpdateProductQuantityTest extends BaseTest {
         shopPage.addRandomProductsToCart(1);
         CartPage cartPage = shopPage.goToCart();
 
-        double unitPrice = cartPage.getUnitPrice();
+        double unitPrice = cartPage.getLastUnitPrice();
         double initialSubtotal = cartPage.getSubtotalPrice();
         softAssert.assertEquals(initialSubtotal, unitPrice * 1, "❌ Subtotal mismatch at qty=1");
 
         cartPage.clickPlus();
-        softAssert.assertEquals(cartPage.getSubtotalPrice(), unitPrice * 2, "❌ Subtotal mismatch at qty=2");
+        double updatedInitialSubtotal = cartPage.getSubtotalPrice();
+        softAssert.assertEquals(updatedInitialSubtotal, unitPrice * 2, "❌ Subtotal mismatch at qty=2");
 
         cartPage.updateQuantity(4);
-        softAssert.assertEquals(cartPage.getSubtotalPrice(), unitPrice * 4, "❌ Subtotal mismatch at qty=4");
+        updatedInitialSubtotal = cartPage.getSubtotalPrice();
+        softAssert.assertEquals(updatedInitialSubtotal, unitPrice * 4, "❌ Subtotal mismatch at qty=4");
 
         cartPage.clickMinus();
-        softAssert.assertEquals(cartPage.getSubtotalPrice(), unitPrice * 3, "❌ Subtotal mismatch at qty=3");
+        updatedInitialSubtotal = cartPage.getSubtotalPrice();
+        softAssert.assertEquals(updatedInitialSubtotal, unitPrice * 3, "❌ Subtotal mismatch at qty=3");
 
         softAssert.assertAll();
     }

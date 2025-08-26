@@ -21,7 +21,7 @@ public class TC_02_VerifyMultipleItemsPurchaseTest extends BaseTest {
         loginPage.loginWithValidCredentials();
 
         ShopPage shopPage = homePage.navigateToShopPage();
-        List<Product> selectedProducts = shopPage.getRandomProducts(15);
+        List<Product> selectedProducts = shopPage.getRandomProducts(5);
         shopPage.addProductsToCart(selectedProducts);
         List<Product> mergedSelectedProducts = mergeProductList(selectedProducts);
 

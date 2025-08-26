@@ -5,7 +5,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 import lombok.extern.log4j.Log4j;
-import vn.agest.selenide.common.DriverUtils;
 import vn.agest.selenide.common.ElementHelper;
 import vn.agest.selenide.enums.PageType;
 import vn.agest.selenide.model.Product;
@@ -33,12 +32,12 @@ public class CartPage extends BasePage {
     private final SelenideElement emptyCartMessage = $x("//div[contains(@class,'cart-empty')]//h1[contains(text(),'YOUR SHOPPING CART IS EMPTY')]");
     private final SelenideElement removeMessage = $x("//div[contains(@class,'woocommerce-message') and contains(text(),'removed')]");
 
-    private final SelenideElement quantityInput = $("input.qty");
-    private final SelenideElement plusButton = $(".plus");
-    private final SelenideElement minusButton = $(".minus");
+    private final SelenideElement quantityInput = $x("(//tr[contains(@class,'cart_item')])[last()]//input[contains(@class,'qty')]");
+    private final SelenideElement plusButton = $x("(//tr[contains(@class,'cart_item')])[last()]//span[@class='plus']");
+    private final SelenideElement minusButton = $x("(//tr[contains(@class,'cart_item')])[last()]//span[@class='minus']");
     private final SelenideElement updateCartButton = $("button[name='update_cart']");
-    private final SelenideElement unitPrice = $("tr.cart_item td.product-price span.woocommerce-Price-amount");
-    private final SelenideElement subtotal = $("td.product-subtotal span.woocommerce-Price-amount");
+    private final SelenideElement lastUnitPrice = $x("(//tr[contains(@class,'cart_item')])[last()]//td[@class='product-price']//span[contains(@class,'amount')]");
+    private final SelenideElement lastSubtotal = $x("(//tr[contains(@class,'cart_item')])[last()]//td[@class='product-subtotal']//span[contains(@class,'amount')]");
     private final SelenideElement cartOverlay = $("div.blockUI.blockOverlay");
 
     @Step("Get cart product information")
@@ -110,13 +109,13 @@ public class CartPage extends BasePage {
     }
 
     @Step("Get unit price")
-    public double getUnitPrice() {
-        return BasePage.parsePrice(unitPrice.getText());
+    public double getLastUnitPrice() {
+        return BasePage.parsePrice(lastUnitPrice.getText());
     }
 
     @Step("Get subtotal price from cart")
     public double getSubtotalPrice() {
-        return BasePage.parsePrice(subtotal.getText());
+        return BasePage.parsePrice(lastSubtotal.getText());
     }
 
     @Step("Wait for cart to update (overlay appears then disappears)")

@@ -4,14 +4,14 @@
     <test name="Test Chrome">
         <parameter name="browser" value="chrome" />
         <classes>
-<!--            <class name="vn.agest.selenide.testcase.TC_01_VerifyPurchaseTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_02_VerifyMultipleItemsPurchaseTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_03_VerifyPurchaseWithPaymentMethodsTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_04_VerifySortItemsByPriceTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_05_VerifyOrdersHistoryTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_06_GuestCheckoutTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_07_VerifyMandatoryFieldsErrorTest"/>-->
-<!--            <class name="vn.agest.selenide.testcase.TC_08_ClearCartTest"/>-->
+            <class name="vn.agest.selenide.testcase.TC_01_VerifyPurchaseTest"/>
+            <class name="vn.agest.selenide.testcase.TC_02_VerifyMultipleItemsPurchaseTest"/>
+            <class name="vn.agest.selenide.testcase.TC_03_VerifyPurchaseWithPaymentMethodsTest"/>
+            <class name="vn.agest.selenide.testcase.TC_04_VerifySortItemsByPriceTest"/>
+            <class name="vn.agest.selenide.testcase.TC_05_VerifyOrdersHistoryTest"/>
+            <class name="vn.agest.selenide.testcase.TC_06_GuestCheckoutTest"/>
+            <class name="vn.agest.selenide.testcase.TC_07_VerifyMandatoryFieldsErrorTest"/>
+            <class name="vn.agest.selenide.testcase.TC_08_ClearCartTest"/>
             <class name="vn.agest.selenide.testcase.TC_09_VerifyUpdateProductQuantityTest"/>
         </classes>
     </test>

@@ -175,7 +175,8 @@ public abstract class BasePage {
     @Step("Parse price string: '{priceText}' into double value")
     public static double parsePrice(String priceText) {
         try {
-            String[] numbers = priceText.replaceAll("[^0-9.]", " ").trim().split("\\s+");
+            double num = Double.parseDouble(priceText.replaceAll("[^\\d.]", ""));
+            String[] numbers = String.format("%s", num).split("\\s+");
             if (numbers.length == 0) {
                 throw new RuntimeException("No numeric value found in: " + priceText);
             }
