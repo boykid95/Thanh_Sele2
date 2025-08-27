@@ -1,11 +1,7 @@
 # 🧪 Selenide Automation Framework
-
 This project is an **Automation Test Framework** built with **Selenide** and **TestNG**, applying the **Page Object Model (POM)** design pattern and Java best practices.
-
 ---
-
 ## 📁 Project Structure
-
 ```
 src
 ├── main
@@ -33,11 +29,8 @@ src
 └── utils
 └── TestDataReader.java
 ```
-
 ---
-
 ## 🛠️ Technologies Used
-
 - **Java 17**
 - **Selenide** `6.19.1`
 - **TestNG** `7.8.0`
@@ -48,54 +41,44 @@ src
 
 # ✨ The features are applied
 
-- 🔀 **Github**: Gitflow  
-- ⚙️ **Configuration**: pom.xml (Dependencies, Commandline)  
-- 💻 **Code**: Name convention, OOP, JSON, Data driven  
-- 📊 **Report**: Allure report  
+- 🔀 **Github**: Gitflow
+- ⚙️ **Configuration**: pom.xml (Dependencies, Commandline)
+- 💻 **Code**: Name convention, OOP, JSON, Data driven
+- 📊 **Report**: Allure report
 
 ---
 
 ## 🚀 Getting Started
-
 ### 1. Clone the Repository
-
 ```bash
 git clone https://github.com/boykid95/Thanh_Sele2
 cd selenide-test-project
 ```
-
 ### 2. Run Tests with Maven
-
 ```bash
 mvn clean test
 ```
-
 ### 3. Generate Allure Report (optional)
-
 ```bash
 allure serve target/allure-results
 ```
-
 ---
-
 ## 📦 Prerequisites
-
 Make sure the following are installed and configured:
-
 - **Java 17+ (JDK)**  
   👉 [Download JDK](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 - **Maven 17**  
   👉 [Download Maven](https://maven.apache.org/download.cgi)
 - **IDE:** IntelliJ IDEA, Eclipse, or VS Code
 
-# 📊 How to get the results  
+# 📊 How to get the results
 
-### ▶️ Run tests  
-- Run tests by **command line** or using **UI**  
+### ▶️ Run tests
+- Run tests by **command line** or using **UI**
 
-### 📂 After running the program  
-- Point to the current project  
-- Enter the following in Terminal:  
+### 📂 After running the program
+- Point to the current project
+- Enter the following in Terminal:
   ```bash
   allure serve allure-results
 
